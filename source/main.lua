@@ -6,15 +6,14 @@ local gfx = pd.graphics
 
 
 -- Player
-local playerStartX = 40
-local playerStartY = 120
+local playerStartX = 80
+local playerStartY = 80
 local playerSpeed = 3
-local playerImage = gfx.image.new("images/characterMovingPrototype")
+local playerImages = gfx.imagetable.new("images/player/playerSpriteSheet-table-300-300")
+local playerImage = playerImages:getImage(1)
 local playerSprite = gfx.sprite.new(playerImage)
 playerSprite:moveTo(playerStartX, playerStartY)
 playerSprite:add()
-
-local playerImages = gfx.imagetable.new("images/player-images")
 
 --Game State
 local gameState = "stopped"
