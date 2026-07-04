@@ -6,15 +6,14 @@ local gfx = pd.graphics
 
 
 -- Player
-local playerStartX = 40
-local playerStartY = 120
+local playerStartX = 110
+local playerStartY = 100
 local playerSpeed = 3
-local playerImage = gfx.image.new("images/characterMovingPrototype")
+local playerImages = gfx.imagetable.new("images/player/playerSpriteSheet-table-300-300")
+local playerImage = playerImages:getImage(1)
 local playerSprite = gfx.sprite.new(playerImage)
 playerSprite:moveTo(playerStartX, playerStartY)
 playerSprite:add()
-
-local playerImages = gfx.imagetable.new("images/player-images")
 
 --Game State
 local gameState = "stopped"
@@ -37,8 +36,11 @@ function pd.update()
         local bowDistance = playdate.getCrankPosition()
         if bowDistance > 180 then
             bowDistance = 360 - bowDistance
+            if bowDistance > 120 then
+                bowDistance = 120
+            end
         end
-        bowDistance = (bowDistance / 180) * 100
+        bowDistance = (math.min((bowDistance / 120) * 100, 100))
 
         --choose frame based on crank angle. Rounds to nearest whole number 0-10
         --and chooses corresponding frame
