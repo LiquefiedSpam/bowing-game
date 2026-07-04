@@ -18,4 +18,3 @@ end
 function Player:setBowFrameIndex(crankPosition)
     Player.super.setBowFrameIndex(self, crankPosition)
 end
-
