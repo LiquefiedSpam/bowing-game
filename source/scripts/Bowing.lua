@@ -4,7 +4,7 @@ import "scripts/CharacterSprite"
 -- A parent class for all bowing objects. This class will handle the bowing logic and provide a base for other classes to inherit from.
 class('Bowing').extends(Object)
 
-function Bowing:init(self, character_sprite, x_position, y_position, speed)
+function Bowing:init(character_sprite, x_position, y_position, speed)
     self.character_sprite = character_sprite
     self.bowValue = 0
     self.x = x_position
@@ -13,10 +13,10 @@ function Bowing:init(self, character_sprite, x_position, y_position, speed)
 end
 
 -- sets the `bowFrameIndex` based on object's current `bowValue`, and adjust the sprite's image accordingly
-function Bowing:setBowFrameIndex()
+function Bowing:setBowFrameIndex(crankPosition)
     --translate crank position to a percentage of bow from 0 to 100. 0 is upright,
     -- 100 is maximum bow.
-    local bowDistance = playdate.getCrankPosition()
+    local bowDistance = crankPosition
     if bowDistance > 180 then
         bowDistance = 360 - bowDistance
     end
