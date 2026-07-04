@@ -13,10 +13,9 @@ function Bowing:init(character_sprite, x_position, y_position, speed)
 end
 
 -- sets the `bowFrameIndex` based on object's current `bowValue`, and adjust the sprite's image accordingly
-function Bowing:setBowFrameIndex(crankPosition)
+function Bowing:setBowFrameIndex(bowDistance)
     --translate crank position to a percentage of bow from 0 to 100. 0 is upright,
     -- 100 is maximum bow.
-    local bowDistance = crankPosition
     if bowDistance > 180 then
         bowDistance = 360 - bowDistance
     end

@@ -25,7 +25,7 @@ local score = 0
 
 function pd.update()
     gfx.sprite.update()
-    -- playerSprite.updateWalkIn()
+    playerSprite:updateWalkIn()
     -- UpdateWalkIn(playerSprite)
 
     if playerSprite.hasWalkedIn then
@@ -39,8 +39,7 @@ function pd.update()
             playerSprite:startWalkIn(true, 100)
         end
     elseif gameState == "active" then
-        local crankPosition = pd.getCrankPosition()
-        playerObj:setBowFrameIndex(crankPosition)
+        playerObj:setBowFrameIndex(pd.getCrankPosition())
         if pd.buttonJustPressed(pd.kButtonB) then
             gameState = "stopped"
         end
@@ -48,38 +47,6 @@ function pd.update()
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
 end
-
--- function StartWalkIn(charSprite, walkIn)
---     startedWalkingIn = true
---     walking = true
---     if walkIn then
---         charSprite:moveTo(0, playerStartY) -- start off-screen
---         walkTarget = 130
---         walkSpeed = 3
---     else
---         walkTarget = -50
---         walkSpeed = -3
---     end
--- end
-
--- function UpdateWalkIn(charSprite)
---     if not walking then return end
-
---     local dist = math.abs(walkTarget - charSprite.x)
---     if dist <= 1 then
---         charSprite:moveTo(walkTarget, charSprite.y)
---         walking = false
---         hasWalkedIn = true
---         return
---     end
-
---     local step = walkSpeed
---     if dist < slowRadius then
---         step = walkSpeed * (dist / slowRadius)
---     end
-
---     charSprite:moveTo(charSprite.x + step, charSprite.y)
--- end
 
 -- -- Below is a small example program where you can move a circle
 -- -- around with the crank. You can delete everything in this file,

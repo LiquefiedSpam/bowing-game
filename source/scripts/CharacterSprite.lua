@@ -26,7 +26,7 @@ end
 
 -- Changes the current image of the character sprite to the image at the specified index in the sprite sheet.
 -- Requires: image_index (number)
-function CharacterSprite:change_current_image(self, image_index)
+function CharacterSprite:change_current_image(image_index)
     local new_image = self.top_sprite_sheet:getImage(image_index)
     if new_image then
         self.current_image = new_image
