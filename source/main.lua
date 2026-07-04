@@ -4,6 +4,11 @@ import "CoreLibs/graphics"
 local pd = playdate
 local gfx = pd.graphics
 
+-- state for the walk-in animation
+local walking = false
+local walkTarget = 0
+local walkSpeed = 4
+local slowRadius = 25
 
 -- Player
 local playerStartX = 110
@@ -12,7 +17,7 @@ local playerSpeed = 3
 local playerImages = gfx.imagetable.new("images/player/playerSpriteSheet-table-300-300")
 local playerImage = playerImages:getImage(1)
 local playerSprite = gfx.sprite.new(playerImage)
-playerSprite:moveTo(playerStartX, playerStartY)
+--playerSprite:moveTo(playerStartX, playerStartY)
 playerSprite:add()
 
 --Game State
@@ -21,14 +26,17 @@ local score = 0
 
 function pd.update()
     gfx.sprite.update()
+    UpdateWalkIn(playerSprite)
+
+    if hasWalkedIn then
+        gameState = "active"
+    end
 
     --game start / game over state
-    if gameState == "stopped" then
+    if gameState == "stopped" and not walking then
         gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
-        if pd.buttonJustPressed(pd.kButtonA) then
-            gameState = "active"
-            score = 0
-            playerSprite:moveTo(playerStartX, playerStartY)
+        if pd.buttonJustPressed(pd.kButtonA) and not startedWalkingIn then
+            StartWalkIn(playerSprite, true)
         end
     elseif gameState == "active" then
         --translate crank position to a percentage of bow from 0 to 100. 0 is upright,
@@ -57,6 +65,38 @@ function pd.update()
     end
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
+end
+
+function StartWalkIn(charSprite, walkIn)
+    startedWalkingIn = true
+    walking = true
+    if walkIn then
+        charSprite:moveTo(0, playerStartY) -- start off-screen
+        walkTarget = 130
+        walkSpeed = 3
+    else
+        walkTarget = -50
+        walkSpeed = -3
+    end
+end
+
+function UpdateWalkIn(charSprite)
+    if not walking then return end
+
+    local dist = math.abs(walkTarget - charSprite.x)
+    if dist <= 1 then
+        charSprite:moveTo(walkTarget, charSprite.y)
+        walking = false
+        hasWalkedIn = true
+        return
+    end
+
+    local step = walkSpeed
+    if dist < slowRadius then
+        step = walkSpeed * (dist / slowRadius)
+    end
+
+    charSprite:moveTo(charSprite.x + step, charSprite.y)
 end
 
 -- -- Below is a small example program where you can move a circle
