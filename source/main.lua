@@ -1,62 +1,60 @@
--- Importing libraries used for drawCircleAtPoint and crankIndicator
+import "CoreLibs/sprites"
 import "CoreLibs/graphics"
-import "CoreLibs/ui"
 
--- Localizing commonly used globals
-local pd <const> = playdate
-local gfx <const> = playdate.graphics
+local pd = playdate
+local gfx = pd.graphics
 
--- Defining player variables
-local playerSize = 10
-local playerVelocity = 3
-local playerX, playerY = 200, 120
+
+-- Player
+local playerStartX = 40
+local playerStartY = 120
+local playerSpeed = 3
+local playerImage = gfx.image.new("images/characterMovingPrototype")
+local playerSprite = gfx.sprite.new(playerImage)
+playerSprite:moveTo(playerStartX, playerStartY)
+playerSprite:add()
+
+local playerImages = gfx.imagetable.new("images/player-images")
 
 --Game State
 local gameState = "stopped"
 local score = 0
 
--- Player
-local legsStartX = 40
-local legsStartY = 120
-local torsoStartX = 120;
-local playerSpeed = 3
-local playerImage = gfx.image.new("images/capybara")
-local playerSprite = gfx.sprite.new(playerImage)
-playerSprite:setCollideRect(4, 4, 56, 40)
-playerSprite:moveTo(playerStartX, playerStartY)
-playerSprite:add()
+function pd.update()
+    gfx.sprite.update()
 
--- Defining helper function
-local function ring(value, min, max)
-    if (min > max) then
-        min, max = max, min
-    end
-    return min + (value - min) % (max - min)
-end
+    --game start / game over state
+    if gameState == "stopped" then
+        gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
+        if pd.buttonJustPressed(pd.kButtonA) then
+            gameState = "active"
+            score = 0
+            playerSprite:moveTo(playerStartX, playerStartY)
+        end
+    elseif gameState == "active" then
+        --translate crank position to a percentage of bow from 0 to 100. 0 is upright,
+        -- 100 is maximum bow.
+        local bowDistance = playdate.getCrankPosition()
+        if bowDistance > 180 then
+            bowDistance = 360 - bowDistance
+        end
+        bowDistance = (bowDistance / 180) * 100
 
--- playdate.update function is required in every project!
-function playdate.update()
-    -- Clear screen
-    gfx.clear()
-    -- Draw crank indicator if crank is docked
-    if pd.isCrankDocked() then
-        pd.ui.crankIndicator:draw()
-    else
-        -- Calculate velocity from crank angle
-        local crankPosition = pd.getCrankPosition() - 90
-        local xVelocity = math.cos(math.rad(crankPosition)) * playerVelocity
-        local yVelocity = math.sin(math.rad(crankPosition)) * playerVelocity
-        -- Move player
-        playerX += xVelocity
-        playerY += yVelocity
-        -- Loop player position
-        playerX = ring(playerX, -playerSize, 400 + playerSize)
-        playerY = ring(playerY, -playerSize, 240 + playerSize)
+        --choose frame based on crank angle. Rounds to nearest whole number 0-10
+        --and chooses corresponding frame
+        local bowFrameIndex = math.floor((bowDistance / 10) + .5)
+        local bowFrameImage = playerImages:getImage(bowFrameIndex)
+        if bowFrameImage then
+            playerSprite:setImage(bowFrameImage)
+        end
+
+        --placeholder game over screen activation
+        if pd.buttonJustPressed(pd.kButtonB) then
+            gameState = "stopped"
+        end
     end
-    -- Draw text
-    gfx.drawTextAligned("Template configured!", 200, 30, kTextAlignment.center)
-    -- Draw player
-    playerImage:drawAnchored(playerX, playerY, 0.5, 0.5)
+
+    gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
 end
 
 -- -- Below is a small example program where you can move a circle
