@@ -6,8 +6,8 @@ local gfx = pd.graphics
 
 
 -- Player
-local playerStartX = 80
-local playerStartY = 80
+local playerStartX = 110
+local playerStartY = 100
 local playerSpeed = 3
 local playerImages = gfx.imagetable.new("images/player/playerSpriteSheet-table-300-300")
 local playerImage = playerImages:getImage(1)
@@ -36,8 +36,11 @@ function pd.update()
         local bowDistance = playdate.getCrankPosition()
         if bowDistance > 180 then
             bowDistance = 360 - bowDistance
+            if bowDistance > 120 then
+                bowDistance = 120
+            end
         end
-        bowDistance = (bowDistance / 180) * 100
+        bowDistance = (math.min((bowDistance / 120) * 100, 100))
 
         --choose frame based on crank angle. Rounds to nearest whole number 0-10
         --and chooses corresponding frame
