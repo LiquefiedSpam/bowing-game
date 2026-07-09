@@ -16,15 +16,17 @@ local slowRadius = 25
 -- Player
 local playerSprite = CharacterSprite(
     "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-300-300")
+    "images/player/playerSpriteSheet-table-300-300",
+    0)
 local playerObj = Player(playerSprite, 110, 100, 3)
 playerSprite:add()
 
 -- Partner
 local partnerSprite = CharacterSprite(
     "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-300-300")
-local partnerObj = Partner(partnerSprite, 290, 100, 3)
+    "images/player/playerSpriteSheet-table-300-300",
+    130)
+local partnerObj = Partner(partnerSprite, 590, 100, 3)
 partnerSprite:add()
 
 --Game State
@@ -35,8 +37,6 @@ function pd.update()
     gfx.sprite.update()
     playerSprite:updateWalkIn()
     partnerSprite:updateWalkIn()
-    -- UpdateWalkIn(playerSprite)
-
     if playerSprite.hasWalkedIn then
         gameState = "active"
     end
@@ -46,7 +46,7 @@ function pd.update()
         gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
         if pd.buttonJustPressed(pd.kButtonA) and not playerSprite.startedWalkingIn then
             playerSprite:startWalkIn(true, 100)
-            partnerSprite:startWalkIn(true, 100)
+            partnerSprite:startWalkIn(false, 100)
         end
     elseif gameState == "active" then
         playerObj:setBowFrameIndex(pd.getCrankPosition())
