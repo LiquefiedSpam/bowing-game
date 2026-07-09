@@ -15,6 +15,9 @@ function Player:setUp()
     self.character_sprite:add()
 end
 
+-- Sets the current frame of the player sprite based on the position of the crank.
+-- param crankPosition (number): The position of the crank, which will be translated into a bow frame index (0-360)
 function Player:setBowFrameIndex(crankPosition)
     Player.super.setBowFrameIndex(self, crankPosition)
 end
+
