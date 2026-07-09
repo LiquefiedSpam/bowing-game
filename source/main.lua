@@ -2,6 +2,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/graphics"
 import "scripts/CharacterSprite"
 import "scripts/Player"
+import "scripts/Partner"
 
 local pd = playdate
 local gfx = pd.graphics
@@ -19,6 +20,13 @@ local playerSprite = CharacterSprite(
 local playerObj = Player(playerSprite, 110, 100, 3)
 playerSprite:add()
 
+-- Partner
+local partnerSprite = CharacterSprite(
+    "images/player/playerBottom.png",
+    "images/player/playerSpriteSheet-table-300-300")
+local partnerObj = Partner(partnerSprite, 290, 100, 3)
+partnerSprite:add()
+
 --Game State
 local gameState = "stopped"
 local score = 0
@@ -26,6 +34,7 @@ local score = 0
 function pd.update()
     gfx.sprite.update()
     playerSprite:updateWalkIn()
+    partnerSprite:updateWalkIn()
     -- UpdateWalkIn(playerSprite)
 
     if playerSprite.hasWalkedIn then
@@ -37,6 +46,7 @@ function pd.update()
         gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
         if pd.buttonJustPressed(pd.kButtonA) and not playerSprite.startedWalkingIn then
             playerSprite:startWalkIn(true, 100)
+            partnerSprite:startWalkIn(true, 100)
         end
     elseif gameState == "active" then
         playerObj:setBowFrameIndex(pd.getCrankPosition())
