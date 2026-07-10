@@ -46,16 +46,12 @@ function Player:setBowFrameIndex(crankPosition)
         if bowFrameIndex ~= self.starting_bow_frame then
             self.current_bow_timer += (1 / 30) -- Assuming the update function is called at 30 FPS
         end
-    elseif bowFrameIndex <= self.current_lowest_bow_frame - 2 then
-        self.current_bow_timer = math.floor(self.current_bow_timer + 0.01)
-        self.bow_table[self.current_bow_num] = self.current_bow_timer
-        self.current_bow_num += 1
-        self.current_lowest_bow_frame = bowFrameIndex
-        self.starting_bow_frame = bowFrameIndex
-        self.current_bow_timer = 0
+    elseif bowFrameIndex <= self.current_bow:getCurrentLowestBowFrame() - 2 then
+        self.current_bow:setBowTimer(self.current_bow:getBowTimer() + 0.01)
+        self.bow_table[self.current_bow_num] = self.current_bow:getBowTimer()
 
-        print("Bow " ..
-            self.current_bow_num ..
+        print("Bows " ..
+            self.current_bow_num + 1 ..
             " completed with time: " ..
             self.bow_table[self.current_bow_num - 1] ..
             " deepest bow frame: " .. self.current_lowest_bow_frame)
