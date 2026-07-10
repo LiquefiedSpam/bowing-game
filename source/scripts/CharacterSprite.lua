@@ -7,39 +7,40 @@ local pd = playdate
 local gfx = pd.graphics
 
 -- Requires: bottom_sprite (string), sprite_sheet (string)
-function CharacterSprite:init(bottom_sprite, sprite_sheet)
+function CharacterSprite:init(bottom_sprite, sprite_sheet, walkTarget)
     self.bottom_sprite = gfx.image.new(bottom_sprite)
     self.top_sprite_sheet = gfx.imagetable.new(sprite_sheet)
 
     --walking state for the walk-in animation
     -- state for the walk-in animation
     self.walking = false
-    self.walkTarget = 0
+    self.walkTarget = walkTarget
     self.walkSpeed = 4
     self.slowRadius = 25
 
 
     -- current image is preset to the first frame of the sprite sheet
     self.current_image = self.top_sprite_sheet:getImage(1)
-    self.playerSprite = gfx.sprite.new(self.current_image)
+    self.sprite_image = gfx.sprite.new(self.current_image)
 end
 
 -- Changes the current image of the character sprite to the image at the specified index in the sprite sheet.
 -- Requires: image_index (number)
+-- Returns: The new current image (based on image))
 function CharacterSprite:change_current_image(image_index)
     local new_image = self.top_sprite_sheet:getImage(image_index)
     if new_image then
         self.current_image = new_image
-        self.playerSprite:setImage(self.current_image)
+        self.sprite_image:setImage(self.current_image)
     end
 end
 
 function CharacterSprite:updateWalkIn()
     if not self.walking then return end
 
-    local dist = math.abs(self.walkTarget - self.playerSprite.x)
+    local dist = math.abs(self.walkTarget - self.sprite_image.x)
     if dist <= 1 then
-        self.playerSprite:moveTo(self.walkTarget, self.playerSprite.y)
+        self.sprite_image:moveTo(self.walkTarget, self.sprite_image.y)
         self.walking = false
         self.hasWalkedIn = true
         return
@@ -50,26 +51,29 @@ function CharacterSprite:updateWalkIn()
         step = self.walkSpeed * (dist / self.slowRadius)
     end
 
-    self.playerSprite:moveTo(self.playerSprite.x + step, self.playerSprite.y)
+    self.sprite_image:moveTo(self.sprite_image.x + step, self.sprite_image.y)
 end
 
-function CharacterSprite:startWalkIn(walkIn, playerStartY)
+-- Starts the walk-in animation for the character sprite.
+-- Within this method, you can decide how fast the character should walk in and where they walk to
+-- Requires: is_Player (boolean), playerStartY (number)
+function CharacterSprite:startWalkIn(is_Player, playerStartY)
     self.startedWalkingIn = true
     self.walking = true
-    if walkIn then
-        self.playerSprite:moveTo(0, playerStartY) -- start off-screen
+    if is_Player then
+        self.sprite_image:moveTo(0, playerStartY) -- start off-screen
         self.walkTarget = 130
         self.walkSpeed = 3
     else
-        self.walkTarget = -50
+        self.walkTarget = 430
         self.walkSpeed = -3
     end
 end
 
 function CharacterSprite:moveTo(x, y)
-    self.playerSprite:moveTo(x, y)
+    self.sprite_image:moveTo(x, y)
 end
 
 function CharacterSprite:add()
-    self.playerSprite:add()
+    self.sprite_image:add()
 end

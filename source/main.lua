@@ -16,15 +16,17 @@ local slowRadius = 25
 -- Player
 local playerSprite = CharacterSprite(
     "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-300-300")
+    "images/player/playerSpriteSheet-table-300-300",
+    0)
 local playerObj = Player(playerSprite, 110, 100, 3)
 playerSprite:add()
 
 -- Partner
 local partnerSprite = CharacterSprite(
     "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-300-300")
-local partnerObj = Partner(partnerSprite, 290, 100, 3)
+    "images/player/playerSpriteSheet-table-300-300",
+    130)
+local partnerObj = Partner(partnerSprite, 590, 100, 3)
 partnerSprite:add()
 
 --Game State
@@ -35,8 +37,6 @@ function pd.update()
     gfx.sprite.update()
     playerSprite:updateWalkIn()
     partnerSprite:updateWalkIn()
-    -- UpdateWalkIn(playerSprite)
-
     if playerSprite.hasWalkedIn then
         gameState = "active"
     end
@@ -46,7 +46,7 @@ function pd.update()
         gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
         if pd.buttonJustPressed(pd.kButtonA) and not playerSprite.startedWalkingIn then
             playerSprite:startWalkIn(true, 100)
-            partnerSprite:startWalkIn(true, 100)
+            partnerSprite:startWalkIn(false, 100)
         end
     elseif gameState == "active" then
         playerObj:setBowFrameIndex(pd.getCrankPosition())
@@ -56,6 +56,9 @@ function pd.update()
     end
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
+    gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
+    gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
+    gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
 end
 
 -- -- Below is a small example program where you can move a circle
