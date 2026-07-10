@@ -56,6 +56,9 @@ function pd.update()
     end
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
+    gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
+    gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
+    gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
 end
 
 -- -- Below is a small example program where you can move a circle

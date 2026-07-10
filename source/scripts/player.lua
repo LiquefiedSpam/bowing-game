@@ -12,6 +12,7 @@ function Player:init(character_sprite, x_position, y_position, speed)
     self.current_bow_num = 0
     self.current_lowest_bow_frame = 0
     self.current_bow_timer = 0
+    self.starting_bow_frame = 0
 end
 
 -- Set up the player sprite and any other necessary properties
@@ -24,17 +25,39 @@ end
 -- param crankPosition (number): The position of the crank, which will be translated into a bow frame index (0-360)
 function Player:setBowFrameIndex(crankPosition)
     local bowFrameIndex = Player.super.setBowFrameIndex(self, crankPosition)
-    if bowFrameIndex < self.current_lowest_bow_frame then
+    print("Current Bow Frame Index: " ..
+        bowFrameIndex .. " | Current Lowest Bow Frame: " .. self.current_lowest_bow_frame)
+    if bowFrameIndex > self.current_lowest_bow_frame then
         self.current_lowest_bow_frame = bowFrameIndex
         self.current_bow_timer = 0
     elseif bowFrameIndex == self.current_lowest_bow_frame then
-        self.current_bow_timer += (1 / 30) -- Assuming the update function is called at 30 FPS
-    elseif bowFrameIndex >= self.current_lowest_bow_frame + 2 then
+        if bowFrameIndex ~= self.starting_bow_frame then
+            self.current_bow_timer += (1 / 30) -- Assuming the update function is called at 30 FPS
+        end
+    elseif bowFrameIndex <= self.current_lowest_bow_frame - 2 then
         self.current_bow_timer = math.floor(self.current_bow_timer + 0.01)
         self.bow_table[self.current_bow_num] = self.current_bow_timer
         self.current_bow_num += 1
         self.current_lowest_bow_frame = bowFrameIndex
+        self.starting_bow_frame = bowFrameIndex
         self.current_bow_timer = 0
+
+        print("Bow " ..
+            self.current_bow_num ..
+            " completed with time: " ..
+            self.bow_table[self.current_bow_num - 1] ..
+            " deepest bow frame: " .. self.current_lowest_bow_frame)
     end
 end
 
+function Player:getCurrentBowNum()
+    return self.current_bow_num
+end
+
+function Player:getCurrentLowestBowFrame()
+    return self.current_lowest_bow_frame
+end
+
+function Player:getBowTimer()
+    return self.current_bow_timer
+end
