@@ -55,31 +55,31 @@ function Player:setBowFrameIndex(crankPosition)
         if progress_current_frame_update > self.bow_frame_length then
         end
     end
-end
 
-local bowFrameIndex = Player.super.setBowFrameIndex(self, crankPosition)
-print("Current Bow Frame Index: " ..
-    bowFrameIndex .. " | Current Lowest Bow Frame: " .. self.current_lowest_bow_frame)
-if bowFrameIndex > self.current_lowest_bow_frame then
-    self.current_lowest_bow_frame = bowFrameIndex
-    self.current_bow_timer = 0
-elseif bowFrameIndex == self.current_lowest_bow_frame then
-    if bowFrameIndex ~= self.starting_bow_frame then
-        self.current_bow_timer += (1 / 30) -- Assuming the update function is called at 30 FPS
+    local bowFrameIndex = Player.super.setBowFrameIndex(self, crankPosition)
+    print("Current Bow Frame Index: " ..
+        bowFrameIndex .. " | Current Lowest Bow Frame: " .. self.current_lowest_bow_frame)
+    if bowFrameIndex > self.current_lowest_bow_frame then
+        self.current_lowest_bow_frame = bowFrameIndex
+        self.current_bow_timer = 0
+    elseif bowFrameIndex == self.current_lowest_bow_frame then
+        if bowFrameIndex ~= self.starting_bow_frame then
+            self.current_bow_timer += (1 / 30) -- Assuming the update function is called at 30 FPS
+        end
+    elseif bowFrameIndex <= self.current_lowest_bow_frame - 2 then
+        self.current_bow_timer = math.floor(self.current_bow_timer + 0.01)
+        self.bow_table[self.current_bow_num] = self.current_bow_timer
+        self.current_bow_num += 1
+        self.current_lowest_bow_frame = bowFrameIndex
+        self.starting_bow_frame = bowFrameIndex
+        self.current_bow_timer = 0
+
+        print("Bow " ..
+            self.current_bow_num ..
+            " completed with time: " ..
+            self.bow_table[self.current_bow_num - 1] ..
+            " deepest bow frame: " .. self.current_lowest_bow_frame)
     end
-elseif bowFrameIndex <= self.current_lowest_bow_frame - 2 then
-    self.current_bow_timer = math.floor(self.current_bow_timer + 0.01)
-    self.bow_table[self.current_bow_num] = self.current_bow_timer
-    self.current_bow_num += 1
-    self.current_lowest_bow_frame = bowFrameIndex
-    self.starting_bow_frame = bowFrameIndex
-    self.current_bow_timer = 0
-
-    print("Bow " ..
-        self.current_bow_num ..
-        " completed with time: " ..
-        self.bow_table[self.current_bow_num - 1] ..
-        " deepest bow frame: " .. self.current_lowest_bow_frame)
 end
 
 function Player:getCurrentBowNum()
