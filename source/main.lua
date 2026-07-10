@@ -7,12 +7,6 @@ import "scripts/Partner"
 local pd = playdate
 local gfx = pd.graphics
 
--- state for the walk-in animation
-local walking = false
-local walkTarget = 0
-local walkSpeed = 4
-local slowRadius = 25
-
 -- Player
 local playerSprite = CharacterSprite(
     "images/player/playerBottom.png",
