@@ -29,7 +29,6 @@ local gameState = "stopped"
 local score = 0
 
 local scenarioManager = ScenarioManager()
-scenarioManager:add()
 
 function pd.update()
     gfx.sprite.update()
@@ -57,4 +56,8 @@ function pd.update()
     gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
     gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
     gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
+end
+
+function getSM()
+    return scenarioManager
 end

@@ -18,6 +18,10 @@ local ScenarioState = {
     OUTRO = 5
 }
 
+local Npc = {
+    KONBINI_CLERK = 1
+}
+
 local currentLocation
 local currentAction
 local currentNpc
@@ -27,12 +31,22 @@ local hasScenario
 
 local runningIntro = false
 
+local timer = 0
+
+local dt = 0
+
+local bowTimeStamps = {}
+
 function ScenarioManager:init()
     self.hasScenario = false
     self.currentState = ScenarioState.INTERVAL
 end
 
 function ScenarioManager:Update()
+    dt = playdate.getElapsedTime()
+    playdate.resetElapsedTime()
+
+
     if hasScenario == false then
         self.ConstructScenario()
         hasScenario = true
@@ -48,26 +62,22 @@ function ScenarioManager:Update()
     end
 
     if currentState == ScenarioState.GAMEPLAY then
-        --gameplay state
+        timer += dt
     end
 
     if currentState == ScenarioState.OUTRO then
         --outro state
+        timer = 0
     end
 end
 
 function ScenarioManager:ConstructScenario()
     local randomIndex = math.random(#Location)
     currentLocation = Location[randomIndex]
-    currentAction = self.DetermineAction
-end
-
--- if we get to the point where we have multiple unique actions per location, this might need to be overhauled
-function ScenarioManager:DetermineAction()
-    if currentLocation == Location.KONBINI then
-        local randomIndex = math.random(1)
-        return Actions[randomIndex]
-    end
+    randomIndex = math.random(#Actions)
+    currentAction = randomIndex
+    randomIndex = math.random(#Npc)
+    currentNpc = randomIndex
 end
 
 function ScenarioManager:RunIntro()
