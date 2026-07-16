@@ -95,9 +95,11 @@ function ScenarioManager:update()
     if self.currentState == ScenarioState.GAMEPLAY then
         timer += dt
         --dummy ending for a scenario
-        if timer > 5 then
+        if timer > 20 then
             self.currentState = ScenarioState.OUTRO
         end
+        --local crankPos = pd.getCrankPosition()
+        playerObj:setBowFrameIndex(pd.getCrankPosition())
     end
 
     if self.currentState == ScenarioState.OUTRO then
