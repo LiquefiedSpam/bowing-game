@@ -5,4 +5,8 @@ bundleID=
 version=1.0.0
 buildNumber=1
 pdxversion=30005
+<<<<<<< Updated upstream
 buildtime=836962638
+=======
+buildtime=837483725
+>>>>>>> Stashed changes
