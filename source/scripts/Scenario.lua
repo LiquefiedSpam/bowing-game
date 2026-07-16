@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 -- class for a scenario, which is a collection of events that can happen in the game
 class("Scenario").extends()
 
@@ -91,7 +90,7 @@ function Scenario:calculateScore(player_bow_table)
         longest_bow_frame * self.time_bows_humility
     return self.player_humility_score
 end
-=======
+
 class("Scenario").extends()
 
 function Scenario:init(
@@ -115,4 +114,3 @@ function Scenario:init(
     self.many_bows_humility = many_bows_humility
     self.deep_bows_humility = deep_bows_humility
 end
->>>>>>> dca16bdd257a1515376c15ad7bae07a489844385
