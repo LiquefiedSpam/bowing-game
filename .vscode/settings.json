@@ -10,9 +10,13 @@
     "bowingClass",
     "CharacterSprite",
     "Partner",
+<<<<<<< HEAD
     "Scenario",
     "Bow",
     "BowingConditions"
+=======
+    "ScenarioManager"
+>>>>>>> MorganBranch
   ],
   // Sumneko Lua type definition doesn't support callbacks/overrides yet,
   // so do this to make playdate.update() override not complain as much
