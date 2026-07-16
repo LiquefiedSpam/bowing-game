@@ -5,8 +5,4 @@ bundleID=
 version=1.0.0
 buildNumber=1
 pdxversion=30005
-<<<<<<< HEAD
-buildtime=836964561
-=======
-buildtime=837487355
->>>>>>> MorganBranch
+buildtime=837497793

@@ -13,7 +13,7 @@ local Actions = { --for now we can just make sure in the code to not select an a
 local ScenarioState = {
     INTERVAL = 1,
     INTRO = 2,
-    WALKIN = 3,
+    --WALKIN = 3,
     GAMEPLAY = 4,
     OUTRO = 5
 }
@@ -22,14 +22,33 @@ local Npc = {
     KONBINI_CLERK = 1
 }
 
+
+local pd = playdate
+local gfx = pd.graphics
+
+-- Player
+local playerSprite = CharacterSprite(
+    "images/player/playerBottom.png",
+    "images/player/playerSpriteSheet-table-300-300",
+    0)
+local playerObj = Player(playerSprite, -100, 100, 3)
+playerSprite:add()
+
+-- Partner
+local partnerSprite = CharacterSprite(
+    "images/player/playerBottom.png",
+    "images/player/playerSpriteSheet-table-300-300",
+    130)
+local partnerObj = Partner(partnerSprite, 590, 100, 3)
+partnerSprite:add()
+
+
 local currentLocation
 local currentAction
 local currentNpc
-local currentState
+local currentState = ScenarioState.INTERVAL
 
 local hasScenario
-
-local runningIntro = false
 
 local timer = 0
 
@@ -37,50 +56,101 @@ local dt = 0
 
 local bowTimeStamps = {}
 
+local score = 0
+
 function ScenarioManager:init()
-    self.hasScenario = false
+    self.hasScenario = true
     self.currentState = ScenarioState.INTERVAL
 end
 
-function ScenarioManager:Update()
+function ScenarioManager:update()
+    if self.currentState == nil then
+        self.currentState = ScenarioState.INTERVAL
+    end
+
     dt = playdate.getElapsedTime()
     playdate.resetElapsedTime()
 
 
-    if hasScenario == false then
-        self.ConstructScenario()
-        hasScenario = true
+    -- if hasScenario == false then
+    --     --self.ConstructScenario()
+    --     hasScenario = true
+    -- end
+
+    print(self.currentState)
+
+    if self.currentState == ScenarioState.INTERVAL then
+        gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
+        if pd.buttonJustPressed(pd.kButtonA) then
+            self.currentState = ScenarioState.INTRO
+        end
+        --playdate.wait(1000)
+        --self.currentState = ScenarioState.INTRO
     end
 
-    if currentState == ScenarioState.INTERVAL then
-        playdate.wait(1000)
-        currentState = ScenarioState.INTRO
+    if self.currentState == ScenarioState.INTRO then
+        self:RunIntro()
     end
 
-    if currentState == ScenarioState.INTRO and runningIntro == false then
-        runningIntro = true
-    end
-
-    if currentState == ScenarioState.GAMEPLAY then
+    if self.currentState == ScenarioState.GAMEPLAY then
         timer += dt
+        --dummy ending for a scenario
+        if timer > 5 then
+            self.currentState = ScenarioState.OUTRO
+        end
     end
 
-    if currentState == ScenarioState.OUTRO then
-        --outro state
+    if self.currentState == ScenarioState.OUTRO then
         timer = 0
+        self:RunOutro()
     end
+
+    gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
+    gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
+    gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
+    gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
 end
 
 function ScenarioManager:ConstructScenario()
     local randomIndex = math.random(#Location)
-    currentLocation = Location[randomIndex]
+    self.currentLocation = Location[randomIndex]
     randomIndex = math.random(#Actions)
-    currentAction = randomIndex
+    self.currentAction = randomIndex
     randomIndex = math.random(#Npc)
-    currentNpc = randomIndex
+    self.currentNpc = randomIndex
 end
 
 function ScenarioManager:RunIntro()
-    --running intro, which means displaying the visuals of location, action and person, having the characters walk in
-    --or just pop in based on what the scenario is, etc
+    --first display visuals of location and action and all that, then...
+
+    if not playerSprite.startedWalkingIn then
+        playerSprite:startWalkIn(true, 100)
+        partnerSprite:startWalkIn(false, 100)
+    end
+
+    if playerSprite.startedWalkingIn then
+        playerSprite:updateWalkIn()
+        partnerSprite:updateWalkIn()
+    end
+
+    if playerSprite.hasWalkedIn then
+        --print("success")
+        self.currentState = ScenarioState.GAMEPLAY
+    end
+end
+
+function ScenarioManager:RunOutro()
+    if not playerSprite.startedWalkingIn then
+        playerSprite:startWalkIn(false, -100)
+        partnerSprite:startWalkIn(true, 500)
+    end
+
+    if playerSprite.startedWalkingIn then
+        playerSprite:updateWalkIn()
+        partnerSprite:updateWalkIn()
+    end
+
+    if playerSprite.hasWalkedIn then
+        self.currentState = ScenarioState.INTERVAL
+    end
 end
