@@ -10,6 +10,8 @@ function Bowing:init(character_sprite, x_position, y_position, speed)
     self.x = x_position
     self.y = y_position
     self.speed = speed
+    self.max_bow_frames = 10
+    self.bow_range = 180
 end
 
 -- sets the `bowFrameIndex` based on object's current `bowValue`, and adjust the sprite's image accordingly
@@ -19,11 +21,11 @@ function Bowing:setBowFrameIndex(bowDistance)
     if bowDistance > 180 then
         bowDistance = 360 - bowDistance
     end
-    bowDistance = (bowDistance / 180) * 100
+    bowDistance = (bowDistance / self.bow_range) * 100
 
     --choose frame based on crank angle. Rounds to nearest whole number 0-10
     --and chooses corresponding frame
-    local bowFrameIndex = math.floor((bowDistance / 10) + .5)
+    local bowFrameIndex = math.floor((bowDistance / self.max_bow_frames) + .5)
     self.character_sprite:change_current_image(bowFrameIndex)
     return bowFrameIndex
 end
