@@ -12,6 +12,7 @@ function Scenario:init(
     many_bows_humility,
     deep_bows_humility,
     time_bows_humility,
+    size_bow_humility,
     player_bowing_intervals,
     player_bowing_intervals_forgiveness)
     self.name = name
@@ -25,6 +26,7 @@ function Scenario:init(
     self.many_bows_humility = many_bows_humility
     self.deep_bows_humility = deep_bows_humility
     self.time_bows_humility = time_bows_humility
+    self.size_bow_humility = size_bow_humility
 
     self.player_bowing_intervals = player_bowing_intervals
     self.player_bowing_intervals_forgiveness = player_bowing_intervals_forgiveness
@@ -96,7 +98,7 @@ function Scenario:calculateScore(player_bow_table, player_intervals)
     local num_of_bows = #player_bow_table
     local deepest_bow_frame = player_bow_table[1]:getCurrentLowestBowFrame()
     local longest_bow_frame = player_bow_table[1]:getBowTimer()
-
+    local total_bow_size = 0
     for _, bow in ipairs(player_bow_table) do
         if bow:getCurrentLowestBowFrame() > deepest_bow_frame then
             deepest_bow_frame = bow:getCurrentLowestBowFrame()
@@ -104,10 +106,14 @@ function Scenario:calculateScore(player_bow_table, player_intervals)
         if bow:getBowTimer() > longest_bow_frame then
             longest_bow_frame = bow:getBowTimer()
         end
+
+        total_bow_size += (bow:getCurrentLowestBowFrame() - bow:getCurrentBowFrame())
     end
 
+    local ave_bow_size = total_bow_size / num_of_bows
+
     self.player_humility_score = num_of_bows * self.many_bows_humility + deepest_bow_frame * self.deep_bows_humility +
-        longest_bow_frame * self.time_bows_humility
+        longest_bow_frame * self.time_bows_humility + ave_bow_size * self.size_bow_humility
     self.calculatedScore = true
     return self.player_humility_score
 end
