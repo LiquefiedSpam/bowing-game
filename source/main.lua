@@ -3,6 +3,7 @@ import "CoreLibs/graphics"
 import "scripts/CharacterSprite"
 import "scripts/Player"
 import "scripts/Partner"
+import "scripts/ScenarioManager"
 
 local pd = playdate
 local gfx = pd.graphics
@@ -26,6 +27,9 @@ partnerSprite:add()
 --Game State
 local gameState = "stopped"
 local score = 0
+
+local scenarioManager = ScenarioManager()
+scenarioManager:add()
 
 function pd.update()
     gfx.sprite.update()

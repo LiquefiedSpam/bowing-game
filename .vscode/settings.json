@@ -9,7 +9,8 @@
     "Player",
     "bowingClass",
     "CharacterSprite",
-    "Partner"
+    "Partner",
+    "ScenarioManager"
   ],
   // Sumneko Lua type definition doesn't support callbacks/overrides yet,
   // so do this to make playdate.update() override not complain as much
