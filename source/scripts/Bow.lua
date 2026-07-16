@@ -1,6 +1,9 @@
 -- Bow class that holds data for a single bow, including the starting frame, current bow number, lowest bow frame, and timer.
 class('Bow').extends()
 
+-- current_bow_frame is the starting frame of the bow
+-- current_lowest_bow_frame is the lowest frame reached during the bow
+-- current_bow_timer is the time spent in the bow.
 function Bow:init(starting_bow_frame)
     self.current_bow_frame = starting_bow_frame
     self.current_lowest_bow_frame = 0
