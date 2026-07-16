@@ -15,6 +15,9 @@ local gameState = "stopped"
 local scenarioManager = ScenarioManager()
 scenarioManager:init()
 
+-- Main Menu
+local mainMenu = gfx.image.new("images/UI_screens/MainMenu.png")
+
 function pd.update()
     gfx.sprite.update()
     scenarioManager:update()
