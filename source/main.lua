@@ -30,10 +30,14 @@ local score = 0
 
 local scenarioManager = ScenarioManager()
 
+-- Main Menu
+local mainMenu = gfx.image.new("images/UI_screens/MainMenu.png")
+
 function pd.update()
     gfx.sprite.update()
     playerSprite:updateWalkIn()
     partnerSprite:updateWalkIn()
+
     if playerSprite.hasWalkedIn then
         gameState = "active"
     end
