@@ -19,6 +19,7 @@ function Player:init(character_sprite, x_position, y_position, speed)
     self.progress_in_current_frame = 0
     self.last_crank_position = 0
     self.current_frame = 1
+    self.in_bow = false
 
     self.bow_frame_length = self.bow_range / self.max_bow_frames
 end
@@ -57,26 +58,28 @@ function Player:setBowFrameIndex(crankPosition)
     end
 
     local bowFrameIndex = Player.super.setBowFrameIndex(self, crankPosition)
-    print("Current Bow Frame Index: " ..
-        bowFrameIndex .. " | Current Lowest Bow Frame: " .. self.current_lowest_bow_frame)
+    -- print("Bows: " .. self.current_bow_num .. " | Current Bow Frame Index: " ..
+    --     bowFrameIndex .. " | Current Lowest Bow Frame: " .. self.current_lowest_bow_frame)
     if bowFrameIndex > self.current_lowest_bow_frame then
         self.current_lowest_bow_frame = bowFrameIndex
         self.current_bow_timer = 0
+        self.in_bow = true
     elseif bowFrameIndex == self.current_lowest_bow_frame then
         if bowFrameIndex ~= self.starting_bow_frame then
             self.current_bow_timer += (1 / 30) -- Assuming the update function is called at 30 FPS
         end
     elseif bowFrameIndex <= self.current_lowest_bow_frame - 2 then
-        self.current_bow_timer = math.floor(self.current_bow_timer + 0.01)
         self.bow_table[self.current_bow_num] = self.current_bow_timer
-        self.current_bow_num += 1
+        if self.in_bow then
+            self.current_bow_num += 1
+            self.in_bow = false
+        end
         self.current_lowest_bow_frame = bowFrameIndex
         self.starting_bow_frame = bowFrameIndex
         self.current_bow_timer = 0
-
         print("Bow " ..
             self.current_bow_num ..
-            " completed with time: " ..
+            " with time: " ..
             self.bow_table[self.current_bow_num - 1] ..
             " deepest bow frame: " .. self.current_lowest_bow_frame)
     end
