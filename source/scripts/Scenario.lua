@@ -49,6 +49,8 @@ function Scenario:score()
 end
 
 -- checks the player's bowing events (in terms of time) and ensures that they are in the correct order.
+-- this compares required intervals with player bowing times (with forgiveness)
+-- player_intervals is a table of decimal values that represents the times at which the player bowed during the scenario
 -- if it is correct, then return true. Else, return false.
 function Scenario:checkOrderOfEvents(player_intervals)
     if #player_intervals <= 0 then
