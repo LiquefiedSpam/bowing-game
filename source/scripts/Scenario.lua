@@ -47,22 +47,16 @@ end
 -- checks the player's bowing events (in terms of time) and ensures that they are in the correct order.
 -- if it is correct, then return true. Else, return false.
 function Scenario:checkOrderOfEvents(player_intervals)
-    -- scaffholding for the actual method, not completed
+    for i = 1, #self.player_bowing_intervals do
+        local checked_interval = self.player_bowing_intervals[i]
+        local actual_interval = player_intervals[i]
 
+        if math.abs(checked_interval - actual_interval) > self.player_bowing_intervals_forgiveness then
+            return false
+        end
+    end
 
-    -- for i = 1, #self.player_bowing_intervals do
-    --     local expected_interval = self.player_bowing_intervals[i]
-    --     local actual_interval = player_intervals[i]
-
-    --     if not actual_interval then
-    --         return false
-    --     end
-
-    --     if math.abs(expected_interval - actual_interval) > self.player_bowing_intervals_forgiveness then
-    --         return false
-    --     end
-    -- end
-    -- return true
+    return true
 end
 
 -- calculates the player score based on the player's bow table and the conditions of the scenario. Updates the player_humility_score property accordingly.
