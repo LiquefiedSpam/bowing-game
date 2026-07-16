@@ -42,6 +42,9 @@ local partnerSprite = CharacterSprite(
 local partnerObj = Partner(partnerSprite, 590, 100, 3)
 partnerSprite:add()
 
+-- Main Menu
+local mainMenu = gfx.image.new("images/UI_screens/MainMenu.png")
+
 
 local currentLocation
 local currentAction
@@ -67,7 +70,6 @@ function ScenarioManager:update()
     if self.currentState == nil then
         self.currentState = ScenarioState.INTERVAL
     end
-
     dt = playdate.getElapsedTime()
     playdate.resetElapsedTime()
 
@@ -77,10 +79,11 @@ function ScenarioManager:update()
     --     hasScenario = true
     -- end
 
-    print(self.currentState)
+    -- print(self.currentState)
 
     if self.currentState == ScenarioState.INTERVAL then
-        gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
+        mainMenu:draw(0, 0)
+        -- gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
         if pd.buttonJustPressed(pd.kButtonA) then
             self.currentState = ScenarioState.INTRO
         end
@@ -100,17 +103,17 @@ function ScenarioManager:update()
         end
         --local crankPos = pd.getCrankPosition()
         playerObj:setBowFrameIndex(pd.getCrankPosition())
+
+        gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
+        gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
+        gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
+        gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
     end
 
     if self.currentState == ScenarioState.OUTRO then
         timer = 0
         self:RunOutro()
     end
-
-    gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
-    gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
-    gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
-    gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
 end
 
 function ScenarioManager:ConstructScenario()
