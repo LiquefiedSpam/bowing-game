@@ -67,11 +67,7 @@ function ScenarioManager:update()
         end
         playdate.graphics.clear()
         self.currentScenario:runCutscene()
-
-        if pd.buttonJustPressed(pd.kButtonB) then
-            self.currentState = ScenarioState.INTRO
-            self:ConstructScenario()
-        end
+        self.currentState = ScenarioState.INTRO
     end
 
     if self.currentState == ScenarioState.INTRO then
