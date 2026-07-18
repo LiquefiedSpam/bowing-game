@@ -132,7 +132,7 @@ function ScenarioManager:RunGameplay()
 
     timer += dt
     --dummy ending for a scenario
-    if timer > 20 then
+    if timer > 5 then
         self.currentState = ScenarioState.OUTRO
     end
 
