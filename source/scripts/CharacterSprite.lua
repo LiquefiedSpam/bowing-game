@@ -91,3 +91,8 @@ end
 function CharacterSprite:add()
     self.playerSprite:add()
 end
+
+function CharacterSprite:setImageFlip(flip)
+    self.playerSprite:setImageFlip(flip)
+    return self
+end

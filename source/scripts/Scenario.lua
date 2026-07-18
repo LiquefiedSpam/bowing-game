@@ -29,6 +29,7 @@ function Scenario:init(
     self.player_bowing_intervals = player_bowing_intervals
     self.player_bowing_intervals_forgiveness = player_bowing_intervals_forgiveness
     self.calculatedScore = false
+    self.total_time_provided = 6
 end
 
 -- returns a string result representing the score of the scenario based on the player's performance and the conditions of the scenario

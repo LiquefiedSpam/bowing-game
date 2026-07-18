@@ -6,6 +6,7 @@ import "scripts/Cutscene"
 class("ScenarioKombini").extends(Scenario)
 
 local pd = playdate
+local gfx = pd.graphics
 
 -- Player
 local playerSprite = CharacterSprite(
@@ -20,6 +21,7 @@ local partnerSprite = CharacterSprite(
     "images/player/playerBottom.png",
     "images/player/playerSpriteSheet-table-300-300",
     130)
+
 local partnerObj = Partner(partnerSprite, 590, 100, 3)
 partnerSprite:add()
 
