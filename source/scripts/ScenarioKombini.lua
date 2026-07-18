@@ -1,7 +1,9 @@
 import "scripts/Bow"
+import "scripts/Scenario"
+import "scripts/Cutscene"
 
 -- ScenarioKombini class that extends the Scenario class and represents the Kombini scenario in the game.
-class("ScenarioKombini").extends()
+class("ScenarioKombini").extends(Scenario)
 
 local pd = playdate
 
@@ -26,12 +28,17 @@ local Actions = { --for now we can just make sure in the code to not select an a
     CHECKOUT = 1,
 }
 
+local temp_cutscene = Cutscene(
+    "images/background/temp-box1.png",
+    "images/background/temp-box2.png",
+    "images/background/temp-box3.png")
+
 function ScenarioKombini:init(scenario_type)
     if scenario_type == Actions.CHECKOUT then
         ScenarioKombini.super.init(
             self,
             "Checkout",
-            nil,
+            temp_cutscene,
             10,
             20,
             5,
@@ -75,6 +82,10 @@ function ScenarioKombini:runIntro()
     end
 
     return false
+end
+
+function ScenarioKombini:runCutscene()
+    ScenarioKombini.super.runCutscene(self)
 end
 
 -- Updates the player's bowing state based on the current crank position.

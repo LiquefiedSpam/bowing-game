@@ -16,9 +16,7 @@ function Scenario:init(
     player_bowing_intervals,
     player_bowing_intervals_forgiveness)
     self.name = name
-    -- cutscene for later
     self.cutscene = cutscene
-
     self.player_humility_score = 0
     self.humility_low_range_score = humility_low_range_score
     self.humility_high_range_score = humility_high_range_score
@@ -116,4 +114,8 @@ function Scenario:calculateScore(player_bow_table, player_intervals)
         longest_bow_frame * self.time_bows_humility + ave_bow_size * self.size_bow_humility
     self.calculatedScore = true
     return self.player_humility_score
+end
+
+function Scenario:runCutscene()
+    self.cutscene:draw()
 end

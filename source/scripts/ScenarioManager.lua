@@ -14,8 +14,8 @@ local Actions = {
 
 local ScenarioState = {
     INTERVAL = 1,
-    INTRO = 2,
-    --WALKIN = 3,
+    CUTSCENE = 2,
+    INTRO = 3,
     GAMEPLAY = 4,
     OUTRO = 5
 }
@@ -54,11 +54,20 @@ function ScenarioManager:update()
     if self.currentState == ScenarioState.INTERVAL then
         mainMenu:draw(0, 0)
         if pd.buttonJustPressed(pd.kButtonA) then
-            self.currentState = ScenarioState.INTRO
+            self.currentState = ScenarioState.CUTSCENE
             self:ConstructScenario()
         end
         --playdate.wait(1000)
         --self.currentState = ScenarioState.INTRO
+    end
+
+    if self.currentState == ScenarioState.CUTSCENE then
+        if self.currentScenario == nil then
+            error("No scenario has been created. Cannot run cutscene sequence.")
+        end
+        playdate.graphics.clear()
+        self.currentScenario:runCutscene()
+        self.currentState = ScenarioState.INTRO
     end
 
     if self.currentState == ScenarioState.INTRO then
