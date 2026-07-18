@@ -1,13 +1,15 @@
+import "scripts/ScenarioKombini"
+
 class("ScenarioManager").extends()
 
-local Location = {
+local LocationScenarios = {
     KONBINI = 1,
     --TAXI = 2
 }
 
-local Actions = { --for now we can just make sure in the code to not select an action
-    --that doesn't work with the current location I guess
-    CHECKOUT = 1,
+-- number of actions per location
+local Actions = {
+    KONBINI = 1,
 }
 
 local ScenarioState = {
@@ -22,36 +24,11 @@ local Npc = {
     KONBINI_CLERK = 1
 }
 
-
 local pd = playdate
 local gfx = pd.graphics
 
--- Player
-local playerSprite = CharacterSprite(
-    "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-300-300",
-    0)
-local playerObj = Player(playerSprite, -100, 100, 3)
-playerSprite:add()
-
--- Partner
-local partnerSprite = CharacterSprite(
-    "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-300-300",
-    130)
-local partnerObj = Partner(partnerSprite, 590, 100, 3)
-partnerSprite:add()
-
 -- Main Menu
 local mainMenu = gfx.image.new("images/UI_screens/MainMenu.png")
-
-
-local currentLocation
-local currentAction
-local currentNpc
-local currentState = ScenarioState.INTERVAL
-
-local hasScenario
 
 local timer = 0
 
@@ -64,6 +41,7 @@ local score = 0
 function ScenarioManager:init()
     self.hasScenario = true
     self.currentState = ScenarioState.INTERVAL
+    self.currentScenario = nil
 end
 
 function ScenarioManager:update()
@@ -73,19 +51,11 @@ function ScenarioManager:update()
     dt = playdate.getElapsedTime()
     playdate.resetElapsedTime()
 
-
-    -- if hasScenario == false then
-    --     --self.ConstructScenario()
-    --     hasScenario = true
-    -- end
-
-    -- print(self.currentState)
-
     if self.currentState == ScenarioState.INTERVAL then
         mainMenu:draw(0, 0)
-        -- gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
         if pd.buttonJustPressed(pd.kButtonA) then
             self.currentState = ScenarioState.INTRO
+            self:ConstructScenario()
         end
         --playdate.wait(1000)
         --self.currentState = ScenarioState.INTRO
@@ -96,18 +66,7 @@ function ScenarioManager:update()
     end
 
     if self.currentState == ScenarioState.GAMEPLAY then
-        timer += dt
-        --dummy ending for a scenario
-        if timer > 20 then
-            self.currentState = ScenarioState.OUTRO
-        end
-        --local crankPos = pd.getCrankPosition()
-        playerObj:setBowFrameIndex(pd.getCrankPosition())
-
-        gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
-        gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
-        gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
-        gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
+        self:RunGameplay()
     end
 
     if self.currentState == ScenarioState.OUTRO then
@@ -116,46 +75,69 @@ function ScenarioManager:update()
     end
 end
 
+-- Creates a new scenario based on the current location and action. Initializes the scenario and sets it as the current scenario.
 function ScenarioManager:ConstructScenario()
-    local randomIndex = math.random(#Location)
-    self.currentLocation = Location[randomIndex]
-    randomIndex = math.random(#Actions)
-    self.currentAction = randomIndex
-    randomIndex = math.random(#Npc)
-    self.currentNpc = randomIndex
+    self.currentScenario = ScenarioKombini(1)
+
+    -- local location_count = 0
+    -- for _ in pairs(LocationScenarios) do
+    --     location_count = location_count + 1
+    -- end
+
+    -- local randomLocationIndex = math.random(location_count) - 1
+    -- self.currentLocation = LocationScenarios[selectedKey]
+    -- local totalPossibleActions = Actions[self.currentLocation]
+    -- print("Random Location Index: " .. randomLocationIndex .. " | Current Location: " .. self.currentLocation)
+    -- print("Total Action Index: " .. totalPossibleActions)
+    -- local randomActionIndex = math.random(#totalPossibleActions)
+    -- self.currentAction = randomActionIndex
+
+    -- if self.currentLocation == LocationScenarios.KONBINI then
+    --     self.currentScenario = ScenarioKombini(self.currentAction)
+    -- else
+    --     error("Invalid location index: " .. tostring(randomLocationIndex))
+    -- end
 end
 
 function ScenarioManager:RunIntro()
     --first display visuals of location and action and all that, then...
-
-    if not playerSprite.startedWalkingIn then
-        playerSprite:startWalkIn(true, 100)
-        partnerSprite:startWalkIn(false, 100)
+    if self.currentScenario == nil then
+        error("No scenario has been created. Cannot run intro sequence.")
     end
 
-    if playerSprite.startedWalkingIn then
-        playerSprite:updateWalkIn()
-        partnerSprite:updateWalkIn()
-    end
-
-    if playerSprite.hasWalkedIn then
-        --print("success")
+    local intro_result = self.currentScenario:runIntro()
+    if intro_result then
         self.currentState = ScenarioState.GAMEPLAY
     end
 end
 
+function ScenarioManager:RunGameplay()
+    if self.currentScenario == nil then
+        error("No scenario has been created. Cannot run gameplay sequence.")
+    end
+
+    timer += dt
+    --dummy ending for a scenario
+    if timer > 20 then
+        self.currentState = ScenarioState.OUTRO
+    end
+
+    local playerObj = self.currentScenario:updatePlayerBowing()
+
+    gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
+    gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
+    gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
+    gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
+end
+
 function ScenarioManager:RunOutro()
-    if not playerSprite.startedWalkingIn then
-        playerSprite:startWalkIn(false, -100)
-        partnerSprite:startWalkIn(true, 500)
+    if self.currentScenario == nil then
+        error("No scenario has been created. Cannot run outro sequence.")
     end
 
-    if playerSprite.startedWalkingIn then
-        playerSprite:updateWalkIn()
-        partnerSprite:updateWalkIn()
-    end
-
-    if playerSprite.hasWalkedIn then
+    local outro_result = self.currentScenario:runOutro()
+    if outro_result then
         self.currentState = ScenarioState.INTERVAL
+        self.currentScenario = nil
     end
 end
