@@ -7,7 +7,7 @@ local LocationScenarios = {
     --TAXI = 2
 }
 
--- number of actions per location
+-- number of actions per location (keys have to be the same name as the location keys in LocationScenarios)
 local Actions = {
     KONBINI = 1,
 }
@@ -77,26 +77,31 @@ end
 
 -- Creates a new scenario based on the current location and action. Initializes the scenario and sets it as the current scenario.
 function ScenarioManager:ConstructScenario()
-    self.currentScenario = ScenarioKombini(1)
+    -- self.currentScenario = ScenarioKombini(1)
 
-    -- local location_count = 0
-    -- for _ in pairs(LocationScenarios) do
-    --     location_count = location_count + 1
-    -- end
+    local location_count = 0
+    for _ in pairs(LocationScenarios) do
+        location_count = location_count + 1
+    end
 
-    -- local randomLocationIndex = math.random(location_count) - 1
-    -- self.currentLocation = LocationScenarios[selectedKey]
-    -- local totalPossibleActions = Actions[self.currentLocation]
-    -- print("Random Location Index: " .. randomLocationIndex .. " | Current Location: " .. self.currentLocation)
-    -- print("Total Action Index: " .. totalPossibleActions)
-    -- local randomActionIndex = math.random(#totalPossibleActions)
-    -- self.currentAction = randomActionIndex
+    local location_keys = {}
+    for key in pairs(LocationScenarios) do
+        table.insert(location_keys, key)
+    end
 
-    -- if self.currentLocation == LocationScenarios.KONBINI then
-    --     self.currentScenario = ScenarioKombini(self.currentAction)
-    -- else
-    --     error("Invalid location index: " .. tostring(randomLocationIndex))
-    -- end
+    local randomLocationIndex = math.random(location_count)
+    self.currentLocation = location_keys[randomLocationIndex]
+    local totalPossibleActions = Actions[self.currentLocation]
+    local randomActionIndex = math.random(totalPossibleActions)
+    self.currentAction = randomActionIndex
+
+    print("Constructing scenario for location: " ..
+        tostring(self.currentLocation) .. " and action: " .. tostring(self.currentAction))
+    if LocationScenarios[self.currentLocation] == LocationScenarios.KONBINI then
+        self.currentScenario = ScenarioKombini(self.currentAction)
+    else
+        error("Invalid location index: " .. tostring(randomLocationIndex))
+    end
 end
 
 function ScenarioManager:RunIntro()
