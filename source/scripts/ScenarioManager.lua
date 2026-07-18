@@ -7,7 +7,7 @@ local LocationScenarios = {
     --TAXI = 2
 }
 
--- number of actions per location
+-- number of actions per location (keys have to be the same name as the location keys in LocationScenarios)
 local Actions = {
     KONBINI = 1,
 }
