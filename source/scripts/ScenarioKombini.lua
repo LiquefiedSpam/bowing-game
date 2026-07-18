@@ -1,4 +1,6 @@
 import "scripts/Bow"
+local pd <const> = playdate
+local gfx <const> = pd.graphics
 
 -- ScenarioKombini class that extends the Scenario class and represents the Kombini scenario in the game.
 class("ScenarioKombini").extends()
@@ -60,6 +62,30 @@ end
 -- Runs the intro sequence for the Kombini scenario, which includes the player and partner walking into the scene.
 -- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
 function ScenarioKombini:runIntro()
+    if not playerSprite.startedWalkingIn then
+        playerSprite:startWalkIn(true, 100)
+        partnerSprite:startWalkIn(false, 100)
+    end
+
+    if playerSprite.startedWalkingIn then
+        playerSprite:updateWalkIn()
+        partnerSprite:updateWalkIn()
+    end
+
+    if playerSprite.hasWalkedIn then
+        return true
+    end
+
+    return false
+end
+
+-- Runs the outro sequence for the Kombini scenario, which includes the player walking out of the scene.
+-- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
+function ScenarioKombini:runOutro()
+    local timer = 0
+
+    playerSprite:setImageFlip(playdate.graphics.kImageFlippedX, true)
+
     if not playerSprite.startedWalkingIn then
         playerSprite:startWalkIn(true, 100)
         partnerSprite:startWalkIn(false, 100)
