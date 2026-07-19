@@ -1,6 +1,4 @@
 import "scripts/Bow"
-local pd <const> = playdate
-local gfx <const> = pd.graphics
 import "scripts/Scenario"
 import "scripts/Cutscene"
 
@@ -20,9 +18,10 @@ playerSprite:add()
 -- Partner
 local partnerSprite = CharacterSprite(
     "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-300-300",
-    130)
-local partnerObj = Partner(partnerSprite, 590, 100, 3)
+    "images/player/spritesheet-table-400-480",
+    0)
+local partnerObj = Partner(partnerSprite, 100, 100, 3)
+--local partnerObj = Partner(partnerSprite, 590, 100, 3)
 partnerSprite:add()
 
 local Actions = { --for now we can just make sure in the code to not select an action
@@ -70,8 +69,8 @@ end
 -- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
 function ScenarioKombini:runIntro()
     if not playerSprite.startedWalkingIn then
-        playerSprite:startWalkIn(true, true)
-        partnerSprite:startWalkIn(false, false)
+        playerSprite:startWalkIn(true, 100)
+        partnerSprite:startWalkIn(false, 100)
     end
 
     if playerSprite.startedWalkingIn then
@@ -79,31 +78,7 @@ function ScenarioKombini:runIntro()
         partnerSprite:updateWalkIn()
     end
 
-    if playerSprite.hasWalkedIn and partnerSprite.hasWalkedIn then
-        return true
-    end
-
-    return false
-end
-
--- Runs the outro sequence for the Kombini scenario, which includes the player walking out of the scene.
--- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
-function ScenarioKombini:runOutro()
-    local timer = 0
-
-    --playerSprite:setImageFlip(playdate.graphics.kImageFlippedX, true)
-
-    if not playerSprite.startedWalkingIn then
-        playerSprite:startWalkIn(false, true)
-        partnerSprite:startWalkIn(true, false)
-    end
-
-    if playerSprite.startedWalkingIn then
-        playerSprite:updateWalkIn()
-        partnerSprite:updateWalkIn()
-    end
-
-    if playerSprite.hasWalkedIn and partnerSprite.hasWalkedIn then
+    if playerSprite.hasWalkedIn then
         return true
     end
 
@@ -119,4 +94,24 @@ end
 function ScenarioKombini:updatePlayerBowing()
     playerObj:setBowFrameIndex(pd.getCrankPosition())
     return playerObj
+end
+
+function ScenarioKombini:runOutro()
+    if not playerSprite.startedWalkingIn then
+        playerSprite:change_current_image(1)
+        partnerSprite:change_current_image(1)
+        playerSprite:startWalkIn(false, -100)
+        partnerSprite:startWalkIn(true, 500)
+    end
+
+    if playerSprite.startedWalkingIn then
+        playerSprite:updateWalkIn()
+        partnerSprite:updateWalkIn()
+    end
+
+    if playerSprite.hasWalkedIn then
+        return true
+    end
+
+    return false
 end
