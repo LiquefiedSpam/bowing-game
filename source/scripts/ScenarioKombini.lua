@@ -1,14 +1,10 @@
-<<<<<<< HEAD
 import "scripts/PlayerBow"
 import "scripts/PartnerBow"
+import "scripts/Scenario"
+import "scripts/Cutscene"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
-=======
-import "scripts/Bow"
->>>>>>> main
-import "scripts/Scenario"
-import "scripts/Cutscene"
 
 -- ScenarioKombini class that extends the Scenario class and represents the Kombini scenario in the game.
 class("ScenarioKombini").extends(Scenario)
