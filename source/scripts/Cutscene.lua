@@ -1,3 +1,4 @@
+-- Cutscene class, represents a cutscene in the game, which displays a sequence of images with sound effects.
 class("Cutscene").extends()
 
 local gfx = playdate.graphics
@@ -5,6 +6,7 @@ local pd = playdate
 local boxes_sprite = gfx.image.new("images/background/box-sprites.png")
 local box_sfx = playdate.sound.fileplayer.new("sounds/box_add_sfx.mp3")
 
+-- Cutscene class constructor, taking in three image file paths corresponding to the images to be displayed in the cutscene.
 function Cutscene:init(image_one_path, image_two_path, image_three_path)
     self.image_one_path = gfx.image.new(image_one_path)
     self.image_two_path = gfx.image.new(image_two_path)
@@ -12,6 +14,7 @@ function Cutscene:init(image_one_path, image_two_path, image_three_path)
     self.animation_complete = false
 end
 
+-- Draws the cutscene by displaying the sequence of images and playing sound effects.
 function Cutscene:draw()
     if not self.animation_complete then
         self:animation_sequence()

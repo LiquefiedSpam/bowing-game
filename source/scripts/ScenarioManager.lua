@@ -132,11 +132,12 @@ function ScenarioManager:RunGameplay()
 
     timer += dt
     --dummy ending for a scenario
-    if timer > 5 then
+    if timer > self.currentScenario:getTotalTimeProvided() then
         self.currentState = ScenarioState.OUTRO
     end
 
     local playerObj = self.currentScenario:updatePlayerBowing()
+    local partnerObj = self.currentScenario:updatePartnerBowing(timer)
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
     gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)

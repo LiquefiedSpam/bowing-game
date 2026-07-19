@@ -21,6 +21,7 @@ function CharacterSprite:init(bottom_sprite, sprite_sheet)
 
     -- current image is preset to the first frame of the sprite sheet
     self.current_image = self.top_sprite_sheet:getImage(1)
+    self.current_image_index = 1
     self.playerSprite = gfx.sprite.new(self.current_image)
 end
 
@@ -29,6 +30,7 @@ end
 function CharacterSprite:change_current_image(image_index)
     local new_image = self.top_sprite_sheet:getImage(image_index)
     if new_image then
+        self.current_image_index = image_index
         self.current_image = new_image
         self.playerSprite:setImage(self.current_image)
     end
