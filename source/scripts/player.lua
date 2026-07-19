@@ -1,5 +1,5 @@
 import "scripts/Bowing"
-import "scripts/Bow"
+import "scripts/PlayerBow"
 local pd = playdate
 
 -- Player class, inherits from the Bowing class and represents the player character in the game.

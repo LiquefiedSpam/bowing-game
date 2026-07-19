@@ -1,3 +1,5 @@
+import "scripts/PartnerBow"
+
 -- class for a scenario, which is a collection of events that can happen in the game
 class("Scenario").extends()
 
@@ -14,7 +16,8 @@ function Scenario:init(
     time_bows_humility,
     size_bow_humility,
     player_bowing_intervals,
-    player_bowing_intervals_forgiveness)
+    player_bowing_intervals_forgiveness
+)
     self.name = name
     self.cutscene = cutscene
     self.player_humility_score = 0
@@ -29,6 +32,7 @@ function Scenario:init(
     self.player_bowing_intervals = player_bowing_intervals
     self.player_bowing_intervals_forgiveness = player_bowing_intervals_forgiveness
     self.calculatedScore = false
+    self.total_time_provided = 10
 end
 
 -- returns a string result representing the score of the scenario based on the player's performance and the conditions of the scenario
@@ -118,4 +122,8 @@ end
 
 function Scenario:runCutscene()
     self.cutscene:draw()
+end
+
+function Scenario:getTotalTimeProvided()
+    return self.total_time_provided
 end
