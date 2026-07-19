@@ -11,6 +11,7 @@ function CharacterSprite:init(bottom_sprite, sprite_sheet)
     self.bottom_sprite = gfx.image.new(bottom_sprite)
     self.top_sprite_sheet = gfx.imagetable.new(sprite_sheet)
 
+
     --walking state for the walk-in animation
     -- state for the walk-in animation
     self.walking = false
@@ -23,6 +24,12 @@ function CharacterSprite:init(bottom_sprite, sprite_sheet)
     self.current_image = self.top_sprite_sheet:getImage(1)
     self.current_image_index = 1
     self.playerSprite = gfx.sprite.new(self.current_image)
+
+    -- if blow_up then
+    --     self.playerSprite:setScale(1.5)
+    -- else
+    --     self.playerSprite:setScale(1)
+    -- end
 end
 
 -- Changes the current image of the character sprite to the image at the specified index in the sprite sheet.
@@ -72,7 +79,7 @@ function CharacterSprite:startWalkIn(walkIn, isPlayer)
     self.hasWalkedIn = false
     self.startedWalkingIn = true
     self.walking = true
-    self.baseY = 100
+    self.baseY = 200
     self.bouncePhase = 0
     self.bounceAmplitude = 4   --small bounce
     self.bounceFrequency = 0.3 --how many 'bounces' per pixel walked
@@ -80,7 +87,7 @@ function CharacterSprite:startWalkIn(walkIn, isPlayer)
     if walkIn then
         if isPlayer then
             self.playerSprite:moveTo(0, self.baseY) -- start off-screen, 0 is dummy approximate value
-            self.walkTarget = 130
+            self.walkTarget = 230
             self.walkSpeed = 3
         else
             --self.playerSprite:moveTo(600, self.baseY) -- start off-screen, 600 is dummy approximate value
