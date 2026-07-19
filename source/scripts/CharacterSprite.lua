@@ -43,6 +43,7 @@ function CharacterSprite:updateWalkIn()
         self.playerSprite:moveTo(self.walkTarget, self.playerSprite.y)
         self.walking = false
         self.hasWalkedIn = true
+        self.startedWalkingIn = false
         return
     end
 
@@ -65,22 +66,35 @@ function CharacterSprite:updateWalkIn()
 end
 
 --start the walk-in 'animation'
-function CharacterSprite:startWalkIn(walkIn, playerStartY)
+function CharacterSprite:startWalkIn(walkIn, isPlayer)
+    self.hasWalkedIn = false
     self.startedWalkingIn = true
     self.walking = true
-    self.baseY = playerStartY
+    self.baseY = 100
     self.bouncePhase = 0
     self.bounceAmplitude = 4   --small bounce
     self.bounceFrequency = 0.3 --how many 'bounces' per pixel walked
 
     if walkIn then
-        self.playerSprite:moveTo(0, playerStartY) -- start off-screen, 0 is dummy approximate value
-        self.walkTarget = 130
-        self.walkSpeed = 3
+        if isPlayer then
+            self.playerSprite:moveTo(0, self.baseY) -- start off-screen, 0 is dummy approximate value
+            self.walkTarget = 130
+            self.walkSpeed = 3
+        else
+            --self.playerSprite:moveTo(600, self.baseY) -- start off-screen, 600 is dummy approximate value
+            self.walkTarget = 600 -- dummy approximate value
+            self.walkSpeed = 3
+        end
     else
-        self.playerSprite:moveTo(600, playerStartY) -- start off-screen, 600 is dummy approximate value
-        self.walkTarget = 400                       -- dummy approximate value
-        self.walkSpeed = -3
+        if isPlayer then
+            --self.playerSprite:moveTo(0, self.baseY) -- start off-screen, 0 is dummy approximate value
+            self.walkTarget = 0
+            self.walkSpeed = -3
+        else
+            self.playerSprite:moveTo(550, self.baseY) -- start off-screen, 600 is dummy approximate value
+            self.walkTarget = 430                     -- dummy approximate value
+            self.walkSpeed = -3
+        end
     end
 end
 
