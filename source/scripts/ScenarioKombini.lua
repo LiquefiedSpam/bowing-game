@@ -27,17 +27,10 @@ playerSprite:add()
 -- Partner
 local partnerSprite = CharacterSprite(
     "images/player/playerBottom.png",
-<<<<<<< HEAD
     "images/player/playerSpriteSheet-table-300-300",
     130)
 
 local partnerObj = Partner(partnerSprite, 590, 100, 3)
-=======
-    "images/player/spritesheet-table-400-480",
-    0)
-local partnerObj = Partner(partnerSprite, 100, 100, 3)
---local partnerObj = Partner(partnerSprite, 590, 100, 3)
->>>>>>> main
 partnerSprite:add()
 
 local Actions = { --for now we can just make sure in the code to not select an action
