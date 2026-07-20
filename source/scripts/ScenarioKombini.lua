@@ -131,3 +131,23 @@ end
 function ScenarioKombini:getTotalTimeProvided()
     return ScenarioKombini.super.getTotalTimeProvided(self)
 end
+
+function ScenarioKombini:runOutro()
+    if not playerSprite.startedWalkingIn then
+        playerSprite:change_current_image(1)
+        partnerSprite:change_current_image(1)
+        playerSprite:startWalkIn(false, -100)
+        partnerSprite:startWalkIn(true, 500)
+    end
+
+    if playerSprite.startedWalkingIn then
+        playerSprite:updateWalkIn()
+        partnerSprite:updateWalkIn()
+    end
+
+    if playerSprite.hasWalkedIn then
+        return true
+    end
+
+    return false
+end

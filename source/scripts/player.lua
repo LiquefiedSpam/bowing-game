@@ -11,6 +11,7 @@ function Player:init(character_sprite, x_position, y_position, speed)
     self.setUp(self)
 
     self.bow_table = {}
+    self.bow_lengths = {}
     self.current_bow_num = 0
     self.current_lowest_bow_frame = 0
     self.current_bow_timer = 0
