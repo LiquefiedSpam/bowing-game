@@ -23,12 +23,12 @@ function Partner:adjustBowPosition(partnerBow, current_time)
     local deepness = partnerBow:getDeepness()
     local reset_position = partnerBow:getResetPosition()
     local bow_deep_time = partnerBow:getTimeStart() + partnerBow:getDuration()
-    print("Current Frame: " ..
-        current_frame ..
-        ", Deepness: " ..
-        deepness ..
-        ", Reset Position: " ..
-        reset_position .. ", Current Time: " .. current_time .. ", Bow Deep Time: " .. bow_deep_time)
+    -- print("Current Frame: " ..
+    --     current_frame ..
+    --     ", Deepness: " ..
+    --     deepness ..
+    --     ", Reset Position: " ..
+    --     reset_position .. ", Current Time: " .. current_time .. ", Bow Deep Time: " .. bow_deep_time)
 
     local function stepTowards(target_frame)
         if current_frame < target_frame then

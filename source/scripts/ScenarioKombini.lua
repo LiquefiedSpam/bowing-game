@@ -17,14 +17,12 @@ local playerSprite = CharacterSprite(
     "images/player/playerSpriteSheet-table-400-240",
     0)
 local playerObj = Player(playerSprite, 130, 100, 3)
-playerSprite:add()
 
 -- Partner
 local partnerSprite = CharacterSprite(
     "images/player/clerkSpriteSheet-table-400-240",
     0)
 local partnerObj = Partner(partnerSprite, 500, 100, 3)
-partnerSprite:add()
 
 local Actions = { --for now we can just make sure in the code to not select an action
     --that doesn't work with the current location I guess
@@ -111,7 +109,7 @@ function ScenarioKombini:updatePartnerBowing(currentTime)
         error("currentTime parameter is invalid. Cannot update partner bowing state.")
     end
 
-    print("Current Time: " .. currentTime .. ", Partner Bow Index: " .. self.partner_bow_index)
+    -- print("Current Time: " .. currentTime .. ", Partner Bow Index: " .. self.partner_bow_index)
 
     local currentPartnerBow = self.partner_bow_table[self.partner_bow_index]
     if not self.bows_complete and partnerObj:adjustBowPosition(currentPartnerBow, currentTime) then
