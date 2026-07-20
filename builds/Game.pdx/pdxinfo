@@ -4,5 +4,10 @@ description=
 bundleID=
 version=1.0.0
 buildNumber=1
+<<<<<<< HEAD
 pdxversion=30100
 buildtime=837829275
+=======
+pdxversion=30005
+buildtime=837828799
+>>>>>>> b66d8c98e5be7ab18f634d7106fc0510b0623944
