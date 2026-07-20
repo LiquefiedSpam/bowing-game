@@ -1,11 +1,16 @@
-import "scripts/Bow"
+import "scripts/PlayerBow"
+import "scripts/PartnerBow"
 import "scripts/Scenario"
 import "scripts/Cutscene"
+
+local pd <const> = playdate
+local gfx <const> = pd.graphics
 
 -- ScenarioKombini class that extends the Scenario class and represents the Kombini scenario in the game.
 class("ScenarioKombini").extends(Scenario)
 
 local pd = playdate
+local gfx = pd.graphics
 
 -- Player
 local playerSprite = CharacterSprite(
@@ -34,6 +39,7 @@ local temp_cutscene = Cutscene(
     "images/background/temp-box3.png")
 
 function ScenarioKombini:init(scenario_type)
+    self.partner_bow_table = {}
     if scenario_type == Actions.CHECKOUT then
         ScenarioKombini.super.init(
             self,
@@ -51,6 +57,10 @@ function ScenarioKombini:init(scenario_type)
             { 1, 2, 3 },
             0.5
         )
+        -- temp partner bow code
+        self.partner_bow_table = { PartnerBow(0, 2, 4, 1), PartnerBow(2, 2, 4, 1), PartnerBow(4, 2, 4, 1) }
+        self.partner_bow_index = 1
+        self.bows_complete = false
     else
         error("Invalid scenario type: " .. tostring(scenario_type))
     end
@@ -95,22 +105,28 @@ function ScenarioKombini:updatePlayerBowing()
     return playerObj
 end
 
-function ScenarioKombini:runOutro()
-    if not playerSprite.startedWalkingIn then
-        playerSprite:change_current_image(1)
-        partnerSprite:change_current_image(1)
-        playerSprite:startWalkIn(false, -100)
-        partnerSprite:startWalkIn(true, 500)
+-- Updates the partner's bowing state based on time
+-- param: currentTime (number): The current time in seconds since the start of the scenario, used to determine the partner's bowing state.
+-- Returns partnerObj for debugging purpose in scenarioManager.lua
+function ScenarioKombini:updatePartnerBowing(currentTime)
+    if not (currentTime >= 0) then
+        error("currentTime parameter is invalid. Cannot update partner bowing state.")
     end
 
-    if playerSprite.startedWalkingIn then
-        playerSprite:updateWalkIn()
-        partnerSprite:updateWalkIn()
+    print("Current Time: " .. currentTime .. ", Partner Bow Index: " .. self.partner_bow_index)
+
+    local currentPartnerBow = self.partner_bow_table[self.partner_bow_index]
+    if not self.bows_complete and partnerObj:adjustBowPosition(currentPartnerBow, currentTime) then
+        self.partner_bow_index = self.partner_bow_index + 1
+        if self.partner_bow_index > #self.partner_bow_table then
+            self.bows_complete = true
+        end
     end
 
-    if playerSprite.hasWalkedIn then
-        return true
-    end
+    return partnerObj
+end
 
-    return false
+-- Returns the total time provided for the Kombini scenario, which is based on the scenario.
+function ScenarioKombini:getTotalTimeProvided()
+    return ScenarioKombini.super.getTotalTimeProvided(self)
 end
