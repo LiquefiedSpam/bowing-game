@@ -136,7 +136,7 @@ function ScenarioManager:RunGameplay()
         error("No scenario has been created. Cannot run gameplay sequence.")
     end
 
-    timer += dt
+    --timer += dt
     --dummy ending for a scenario
     if timer > self.currentScenario:getTotalTimeProvided() then
         self.currentState = ScenarioState.OUTRO
