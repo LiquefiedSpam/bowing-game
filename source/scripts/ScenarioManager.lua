@@ -17,7 +17,8 @@ local ScenarioState = {
     CUTSCENE = 2,
     INTRO = 3,
     GAMEPLAY = 4,
-    OUTRO = 5
+    SCORING = 5,
+    OUTRO = 6
 }
 
 local Npc = {
@@ -42,6 +43,7 @@ function ScenarioManager:init()
     self.hasScenario = true
     self.currentState = ScenarioState.INTERVAL
     self.currentScenario = nil
+    self.playerObj = nil
 end
 
 function ScenarioManager:update()
@@ -76,6 +78,10 @@ function ScenarioManager:update()
 
     if self.currentState == ScenarioState.GAMEPLAY then
         self:RunGameplay()
+    end
+
+    if self.currentState == ScenarioState.SCORING then
+        self:RunScoring()
     end
 
     if self.currentState == ScenarioState.OUTRO then
@@ -136,13 +142,29 @@ function ScenarioManager:RunGameplay()
         self.currentState = ScenarioState.OUTRO
     end
 
-    local playerObj = self.currentScenario:updatePlayerBowing()
+    self.playerObj = self.currentScenario:updatePlayerBowing()
     local partnerObj = self.currentScenario:updatePartnerBowing(timer)
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
-    gfx.drawTextAligned("Bows: " .. playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
-    gfx.drawTextAligned("Lowest Bow Frame: " .. playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
-    gfx.drawTextAligned("Bow Timer: " .. playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
+    gfx.drawTextAligned("Bows: " .. self.playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
+    gfx.drawTextAligned("Lowest Bow Frame: " .. self.playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
+    gfx.drawTextAligned("Bow Timer: " .. self.playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
+end
+
+function ScenarioManager:RunScoring()
+    if self.currentScenario == nil then
+        error("No scenario has been created. Cannot run scoring sequence.")
+    end
+
+    if self.playerObj == nil then
+        error("Player object is nil. Cannot calculate score without player data.")
+    end
+
+    local scoring_result = self.currentScenario:calculateScore(self.playerObj.bow_table, nil)
+    if scoring_result then
+        self.currentState = ScenarioState.INTERVAL
+        self.currentScenario = nil
+    end
 end
 
 function ScenarioManager:RunOutro()
