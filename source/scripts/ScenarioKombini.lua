@@ -2,6 +2,7 @@ import "scripts/PlayerBow"
 import "scripts/PartnerBow"
 import "scripts/Scenario"
 import "scripts/Cutscene"
+import "scripts/CharacterSprite"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
