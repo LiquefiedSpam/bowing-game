@@ -11,7 +11,8 @@ function Player:init(character_sprite, x_position, y_position, speed)
     self.setUp(self)
 
     self.bow_table = {}
-    self.bow_lengths = {}
+    self.bow_intervals = {}
+    self.current_bow_start_time = 0
     self.current_bow_num = 0
     self.current_lowest_bow_frame = 0
     self.current_bow_timer = 0
@@ -34,7 +35,8 @@ end
 
 -- Sets the current frame of the player sprite based on the position of the crank.
 -- param crankPosition (number): The position of the crank, which will be translated into a bow frame index (0-360)
-function Player:setBowFrameIndex(crankPosition)
+-- param currentTime (number): The current time in seconds since the start of the scenario
+function Player:setBowFrameIndex(crankPosition, currentTime)
     if self.last_crank_position ~= crankPosition then
         local progress_current_frame_update = self.progress_in_current_frame + (crankPosition - self.last_crank_position)
 
@@ -61,28 +63,47 @@ function Player:setBowFrameIndex(crankPosition)
     local bowFrameIndex = Player.super.setBowFrameIndex(self, crankPosition)
     -- print("Bows: " .. self.current_bow_num .. " | Current Bow Frame Index: " ..
     --     bowFrameIndex .. " | Current Lowest Bow Frame: " .. self.current_lowest_bow_frame)
+
+    -- if current bow frame is deeper than the lowest, update the lowest bow frame and reset the timer.
     if bowFrameIndex > self.current_lowest_bow_frame then
         self.current_lowest_bow_frame = bowFrameIndex
         self.current_bow_timer = 0
+        self.current_bow_start_time = currentTime
         self.in_bow = true
+
+        -- if current bow frame is equal to the lowest, increment the timer by 1/30th of a second (assuming 30 FPS)
     elseif bowFrameIndex == self.current_lowest_bow_frame then
         if bowFrameIndex ~= self.starting_bow_frame then
             self.current_bow_timer += (1 / 30) -- Assuming the update function is called at 30 FPS
         end
+
+        -- if the current bow frame is 2 frames less than the lowest, then the player has completed a bow. If the player then bows forward, a new bow is created.
     elseif bowFrameIndex <= self.current_lowest_bow_frame - 2 then
-        self.bow_table[self.current_bow_num] = self.current_bow_timer
+        -- if we are in a bow, stop being in the bow.
+        -- else, update the current bow data to append to table
         if self.in_bow then
-            self.current_bow_num += 1
+            local completed_bow = PlayerBow(
+                self.starting_bow_frame,
+                self.current_lowest_bow_frame,
+                self.current_bow_timer)
+            table.insert(self.bow_table, completed_bow)
+
+            table.insert(self.bow_intervals, { self.current_bow_start_time, self.current_bow_start_time +
+            self.current_bow_timer })
+
+            self.current_bow_num = #self.bow_table
             self.in_bow = false
+
+            print("Bow " ..
+                self.current_bow_num ..
+                " with time: " ..
+                completed_bow:getBowTimer() ..
+                " deepest bow frame: " .. self.current_lowest_bow_frame)
         end
+
         self.current_lowest_bow_frame = bowFrameIndex
         self.starting_bow_frame = bowFrameIndex
         self.current_bow_timer = 0
-        print("Bow " ..
-            self.current_bow_num ..
-            " with time: " ..
-            self.bow_table[self.current_bow_num - 1] ..
-            " deepest bow frame: " .. self.current_lowest_bow_frame)
     end
 end
 

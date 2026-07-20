@@ -4,18 +4,10 @@ class('PlayerBow').extends()
 -- current_bow_frame is the starting frame of the bow
 -- current_lowest_bow_frame is the lowest frame reached during the bow
 -- current_bow_timer is the time spent in the bow.
-function PlayerBow:init(starting_bow_frame)
-    self.current_bow_frame = starting_bow_frame
-    self.current_lowest_bow_frame = 0
-    self.current_bow_timer = 0.0
-end
-
--- alternative constructor to initialize a PlayerBow object with specific values for the current bow frame, lowest bow frame, and timer.
--- this is for comparing bows in the Bow Conditions class
-function PlayerBow:init(current_lowest_bow_frame, current_bow_timer)
-    self.current_bow_frame = 0
-    self.current_lowest_bow_frame = current_lowest_bow_frame
-    self.current_bow_timer = current_bow_timer
+function PlayerBow:init(starting_bow_frame, current_lowest_bow_frame, current_bow_timer)
+    self.current_bow_frame = starting_bow_frame or 0
+    self.current_lowest_bow_frame = current_lowest_bow_frame or 0
+    self.current_bow_timer = current_bow_timer or 0.0
 end
 
 function PlayerBow:getCurrentBowFrame()
