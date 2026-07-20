@@ -15,7 +15,7 @@ local gfx = pd.graphics
 -- Player
 local playerSprite = CharacterSprite(
     "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-300-300",
+    "images/player/playerSpriteSheet-table-400-240.png",
     0)
 local playerObj = Player(playerSprite, 130, 100, 3)
 playerSprite:add()
@@ -23,7 +23,7 @@ playerSprite:add()
 -- Partner
 local partnerSprite = CharacterSprite(
     "images/player/playerBottom.png",
-    "images/player/spritesheet-table-400-480",
+    "images/player/clerkSpriteSheet-table-400-240.png",
     0)
 local partnerObj = Partner(partnerSprite, 500, 100, 3)
 partnerSprite:add()

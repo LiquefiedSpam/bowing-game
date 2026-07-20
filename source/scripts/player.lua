@@ -42,7 +42,7 @@ function Player:setBowFrameIndex(crankPosition, currentTime)
 
         --if we should switch frames, keep doing so until we stop
         while progress_current_frame_update < 0 do
-            self.progress_in_current_frame_update = self.bow_frame_length + progress_current_frame_update
+            progress_current_frame_update = self.bow_frame_length + progress_current_frame_update
 
             --don't progress past max amt of frames or go below 1
             if (self.current_frame == 1 or self.current_frame == self.max_bow_frames) then
