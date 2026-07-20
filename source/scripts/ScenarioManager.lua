@@ -139,10 +139,10 @@ function ScenarioManager:RunGameplay()
     --timer += dt
     --dummy ending for a scenario
     if timer > self.currentScenario:getTotalTimeProvided() then
-        self.currentState = ScenarioState.OUTRO
+        self.currentState = ScenarioState.SCORING
     end
 
-    self.playerObj = self.currentScenario:updatePlayerBowing()
+    self.playerObj = self.currentScenario:updatePlayerBowing(timer)
     local partnerObj = self.currentScenario:updatePartnerBowing(timer)
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
@@ -160,10 +160,29 @@ function ScenarioManager:RunScoring()
         error("Player object is nil. Cannot calculate score without player data.")
     end
 
-    local scoring_result = self.currentScenario:calculateScore(self.playerObj.bow_table, nil)
+
+    for key, value in ipairs(self.playerObj.bow_table) do
+        if type(value) == "table" then
+            print("Bow: " ..
+            key ..
+            ", Starting Bow Frame: " ..
+            tostring(value:getCurrentBowFrame()) .. ", CurrentBowFrame: " .. tostring(value:getCurrentLowestBowFrame()) .. ", Bow Timer: " .. tostring(value:getBowTimer()))
+        else
+            print("Bow Interval: " .. key .. ", Value: " .. tostring(value))
+        end
+    end
+    for key, value in ipairs(self.playerObj.bow_intervals) do
+        if type(value) == "table" then
+            print("Bow Interval: " .. key .. ", Start: " .. tostring(value[1]) .. ", End: " .. tostring(value[2]))
+        else
+            print("Bow Interval: " .. key .. ", Value: " .. tostring(value))
+        end
+    end
+
+    local scoring_result = self.currentScenario:calculateScore(self.playerObj.bow_table, self.playerObj.bow_intervals)
+    print("Scoring Result: " .. tostring(scoring_result))
     if scoring_result then
-        self.currentState = ScenarioState.INTERVAL
-        self.currentScenario = nil
+        self.currentState = ScenarioState.OUTRO
     end
 end
 

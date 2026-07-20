@@ -52,10 +52,8 @@ function ScenarioKombini:init(scenario_type)
             2,
             1,
             1,
-            1,
-            1,
             { 1, 2, 3 },
-            0.5
+            3
         )
         -- temp partner bow code
         self.partner_bow_table = { PartnerBow(0, 2, 4, 1), PartnerBow(2, 2, 4, 1), PartnerBow(4, 2, 4, 1) }
@@ -100,8 +98,8 @@ end
 
 -- Updates the player's bowing state based on the current crank position.
 -- Returns playerObj for debugging purpose in scenarioManager.lua
-function ScenarioKombini:updatePlayerBowing()
-    playerObj:setBowFrameIndex(pd.getCrankPosition())
+function ScenarioKombini:updatePlayerBowing(currentTime)
+    playerObj:setBowFrameIndex(pd.getCrankPosition(), currentTime)
     return playerObj
 end
 
@@ -113,7 +111,7 @@ function ScenarioKombini:updatePartnerBowing(currentTime)
         error("currentTime parameter is invalid. Cannot update partner bowing state.")
     end
 
-    print("Current Time: " .. currentTime .. ", Partner Bow Index: " .. self.partner_bow_index)
+    -- print("Current Time: " .. currentTime .. ", Partner Bow Index: " .. self.partner_bow_index)
 
     local currentPartnerBow = self.partner_bow_table[self.partner_bow_index]
     if not self.bows_complete and partnerObj:adjustBowPosition(currentPartnerBow, currentTime) then
