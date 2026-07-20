@@ -50,7 +50,7 @@ function Player:setBowFrameIndex(crankPosition)
             self.current_frame = self.current_frame - 1
         end
 
-        progress_in_current_frame = progress_current_frame_update
+        self.progress_in_current_frame = progress_current_frame_update
 
 
         if progress_current_frame_update > self.bow_frame_length then
