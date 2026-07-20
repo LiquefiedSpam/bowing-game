@@ -77,7 +77,7 @@ function CharacterSprite:startWalkIn(walkIn, isPlayer)
     self.hasWalkedIn = false
     self.startedWalkingIn = true
     self.walking = true
-    self.baseY = 200
+    self.baseY = 240
     self.bouncePhase = 0
     self.bounceAmplitude = 4   --small bounce
     self.bounceFrequency = 0.3 --how many 'bounces' per pixel walked
