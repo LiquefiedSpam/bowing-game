@@ -9,35 +9,32 @@ class("ScenarioKombini").extends(Scenario)
 
 local pd = playdate
 
--- Player
-local playerSprite = CharacterSprite(
-    "images/player/spriteSheet-table-400-240",
-    0)
-local playerObj = Player(playerSprite, 130, 100, 3)
-
--- Partner
-local partnerSprite = CharacterSprite(
-    "images/player/clerkSpriteSheet-table-400-240",
-    0)
-local partnerObj = Partner(partnerSprite, 500, 100, 3)
-
 local Actions = { --for now we can just make sure in the code to not select an action
     --that doesn't work with the current location I guess
     CHECKOUT = 1,
 }
 
-local temp_cutscene = Cutscene(
-    "images/background/temp-box1.png",
-    "images/background/temp-box2.png",
-    "images/background/temp-box3.png")
-
 function ScenarioKombini:init(scenario_type)
-    self.partner_bow_table = {}
+    self.playerSprite = CharacterSprite(
+        "images/player/spriteSheet-table-400-240",
+        0)
+    self.playerObj = Player(self.playerSprite, 130, 100, 3)
+
+    self.partnerSprite = CharacterSprite(
+        "images/player/clerkSpriteSheet-table-400-240",
+        0)
+    self.partnerObj = Partner(self.partnerSprite, 500, 100, 3)
+
+    self.cutscene = Cutscene(
+        "images/background/temp-box1.png",
+        "images/background/temp-box2.png",
+        "images/background/temp-box3.png")
+
     if scenario_type == Actions.CHECKOUT then
         ScenarioKombini.super.init(
             self,
             "Checkout",
-            temp_cutscene,
+            self.cutscene,
             10,
             20,
             5,
@@ -48,7 +45,6 @@ function ScenarioKombini:init(scenario_type)
             { 1, 2, 3 },
             3
         )
-        -- temp partner bow code
         self.partner_bow_table = { PartnerBow(0, 2, 4, 1), PartnerBow(2, 2, 4, 1), PartnerBow(4, 2, 4, 1) }
         self.partner_bow_index = 1
         self.bows_complete = false
@@ -68,17 +64,17 @@ end
 -- Runs the intro sequence for the Kombini scenario, which includes the player and partner walking into the scene.
 -- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
 function ScenarioKombini:runIntro()
-    if not playerSprite.startedWalkingIn then
-        playerSprite:startWalkIn(true, 100)
-        partnerSprite:startWalkIn(false, 100)
+    if not self.playerSprite.startedWalkingIn then
+        self.playerSprite:startWalkIn(true, 100)
+        self.partnerSprite:startWalkIn(false, 100)
     end
 
-    if playerSprite.startedWalkingIn then
-        playerSprite:updateWalkIn()
-        partnerSprite:updateWalkIn()
+    if self.playerSprite.startedWalkingIn then
+        self.playerSprite:updateWalkIn()
+        self.partnerSprite:updateWalkIn()
     end
 
-    if playerSprite.hasWalkedIn then
+    if self.playerSprite.hasWalkedIn then
         return true
     end
 
@@ -92,8 +88,8 @@ end
 -- Updates the player's bowing state based on the current crank position.
 -- Returns playerObj for debugging purpose in scenarioManager.lua
 function ScenarioKombini:updatePlayerBowing(currentTime)
-    playerObj:setBowFrameIndex(pd.getCrankPosition(), currentTime)
-    return playerObj
+    self.playerObj:setBowFrameIndex(pd.getCrankPosition(), currentTime)
+    return self.playerObj
 end
 
 -- Updates the partner's bowing state based on time
@@ -107,14 +103,14 @@ function ScenarioKombini:updatePartnerBowing(currentTime)
     -- print("Current Time: " .. currentTime .. ", Partner Bow Index: " .. self.partner_bow_index)
 
     local currentPartnerBow = self.partner_bow_table[self.partner_bow_index]
-    if not self.bows_complete and partnerObj:adjustBowPosition(currentPartnerBow, currentTime) then
+    if not self.bows_complete and self.partnerObj:adjustBowPosition(currentPartnerBow, currentTime) then
         self.partner_bow_index = self.partner_bow_index + 1
         if self.partner_bow_index > #self.partner_bow_table then
             self.bows_complete = true
         end
     end
 
-    return partnerObj
+    return self.partnerObj
 end
 
 -- Returns the total time provided for the Kombini scenario, which is based on the scenario.
@@ -123,19 +119,19 @@ function ScenarioKombini:getTotalTimeProvided()
 end
 
 function ScenarioKombini:runOutro()
-    if not playerSprite.startedWalkingIn then
-        playerSprite:change_current_image(1)
-        partnerSprite:change_current_image(1)
-        playerSprite:startWalkIn(false, -100)
-        partnerSprite:startWalkIn(true, 500)
+    if not self.playerSprite.startedWalkingIn then
+        self.playerSprite:change_current_image(1)
+        self.partnerSprite:change_current_image(1)
+        self.playerSprite:startWalkIn(false, -100)
+        self.partnerSprite:startWalkIn(true, 500)
     end
 
-    if playerSprite.startedWalkingIn then
-        playerSprite:updateWalkIn()
-        partnerSprite:updateWalkIn()
+    if self.playerSprite.startedWalkingIn then
+        self.playerSprite:updateWalkIn()
+        self.partnerSprite:updateWalkIn()
     end
 
-    if playerSprite.hasWalkedIn then
+    if self.playerSprite.hasWalkedIn then
         return true
     end
 

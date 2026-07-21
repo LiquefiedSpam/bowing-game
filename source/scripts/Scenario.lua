@@ -33,7 +33,7 @@ function Scenario:init(
     self.player_bowing_intervals = player_bowing_intervals
     self.player_bowing_intervals_forgiveness = player_bowing_intervals_forgiveness
     self.calculatedScore = false
-    self.total_time_provided = 10
+    self.total_time_provided = 6
 end
 
 -- returns a string result representing the score of the scenario based on the player's performance and the conditions of the scenario
@@ -58,9 +58,6 @@ end
 -- player_intervals is a table of decimal values that represents the times at which the player bowed during the scenario
 -- if it is correct, then return true. Else, return false.
 function Scenario:checkOrderOfEvents(player_intervals)
-    if #player_intervals <= 0 then
-        error("Player intervals table is empty. Cannot check order of events.")
-    end
     for i = 1, #self.player_bowing_intervals do
         local checked_interval = self.player_bowing_intervals[i]
         local correct_inveral = false
@@ -88,10 +85,6 @@ end
 -- player_intervals is a table of decimal values that represents the times at which the player bowed during the scenario
 -- sets and returns the player_humility_score property based on the player's performance and the conditions of the scenario
 function Scenario:calculateScore(player_bow_table, player_intervals)
-    if (#player_bow_table <= 0) then
-        error("Player bow table is empty. Cannot calculate score.")
-    end
-
     -- checks whether the player's bowing events are in the correct order based on the scenario's conditions. If not, the player score is set to 0 and returned.
     if not (self:checkOrderOfEvents(player_intervals)) then
         self.player_humility_score = 0
