@@ -43,7 +43,13 @@ function ScenarioKombini:init(scenario_type)
         "images/background/temp-box2.png",
         "images/background/temp-box3.png")
 
+
+    self.partner_bow_index = 1
+    self.bows_complete = false
+    self.bow_intervals_for_player = {}
+
     if scenario_type == Actions.CHECKOUT then
+        self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT()
         ScenarioKombini.super.init(
             self,
             "Checkout",
@@ -55,12 +61,9 @@ function ScenarioKombini:init(scenario_type)
             2,
             1,
             1,
-            { 1, 2, 3 },
-            3
+            self.partner_bow_table,
+            0.5
         )
-        self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT()
-        self.partner_bow_index = 1
-        self.bows_complete = false
     else
         error("Invalid scenario type: " .. tostring(scenario_type))
     end
@@ -76,7 +79,7 @@ end
 
 function ScenarioKombini:generatePartnerBowTable_CHECKOUT()
     local num_bows = 1
-    local totalTime = 1
+    local totalTime = 0
     local partner_bow_table = {}
     for i = 1, num_bows do
         local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
@@ -85,6 +88,7 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT()
         local reset_position = 1
         local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
         table.insert(partner_bow_table, partner_bow)
+        table.insert(self.bow_intervals_for_player, bow_start_time)
         totalTime = bow_start_time + bow_duration + 0.5 -- 0.5 is a small extra time increment
 
         print("Partner Bow Table:")
@@ -153,11 +157,11 @@ function ScenarioKombini:getTotalTimeProvided()
 end
 
 function ScenarioKombini:runOutro()
-    if not playerSprite.startedWalkingIn then
-        playerSprite:change_current_image(1)
-        partnerSprite:change_current_image(1)
-        playerSprite:startWalkIn(false, true)
-        partnerSprite:startWalkIn(true, false)
+    if not self.playerSprite.startedWalkingIn then
+        self.playerSprite:change_current_image(1)
+        self.partnerSprite:change_current_image(1)
+        self.playerSprite:startWalkIn(false, true)
+        self.partnerSprite:startWalkIn(true, false)
     end
 
     if self.playerSprite.startedWalkingIn then

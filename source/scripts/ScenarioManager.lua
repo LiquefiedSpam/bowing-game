@@ -18,7 +18,8 @@ local ScenarioState = {
     INTRO = 3,
     GAMEPLAY = 4,
     SCORING = 5,
-    OUTRO = 6
+    OUTRO = 6,
+    BUILDSCENE = 7
 }
 
 local Npc = {
@@ -87,6 +88,10 @@ function ScenarioManager:update()
     if self.currentState == ScenarioState.OUTRO then
         timer = 0
         self:RunOutro()
+    end
+
+    if self.currentState == ScenarioState.BUILDSCENE then
+        self:BuildScene()
     end
 end
 
@@ -195,11 +200,18 @@ function ScenarioManager:RunOutro()
     end
 
     local outro_result = self.currentScenario:runOutro()
-    if outro_result and self.totalTimeGivenSec >= totalTimer then
-        self.currentScenario:runOutro()
+    if outro_result then
+        self.currentState = ScenarioState.BUILDSCENE
+        self.currentAction = nil
+    end
+end
+
+function ScenarioManager:BuildScene()
+    if self.totalTimeGivenSec >= totalTimer then
+        self.currentScenario:destruct()
         self:ConstructScenario()
         self.currentState = ScenarioState.CUTSCENE
-    elseif outro_result and self.totalTimeGivenSec < totalTimer then
+    elseif self.totalTimeGivenSec < totalTimer then
         self.currentState = ScenarioState.INTERVAL
         self.currentAction = nil
     end
