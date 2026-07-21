@@ -32,6 +32,7 @@ local gfx = pd.graphics
 local mainMenu = gfx.image.new("images/UI_screens/MainMenu.png")
 
 local timer = 0
+local totalTimer = 0
 
 local dt = 0
 
@@ -136,6 +137,7 @@ function ScenarioManager:RunGameplay()
     end
 
     timer += dt
+    totalTimer += dt
     --dummy ending for a scenario
     if timer > self.currentScenario:getTotalTimeProvided() then
         self.currentState = ScenarioState.SCORING
@@ -193,10 +195,10 @@ function ScenarioManager:RunOutro()
     end
 
     local outro_result = self.currentScenario:runOutro()
-    if outro_result and self.totalTimeGivenSec >= timer then
+    if outro_result and self.totalTimeGivenSec >= totalTimer then
         self:ConstructScenario()
         self.currentState = ScenarioState.CUTSCENE
-    elseif outro_result and self.totalTimeGivenSec < timer then
+    elseif outro_result and self.totalTimeGivenSec < totalTimer then
         self.currentState = ScenarioState.INTERVAL
         self.currentAction = nil
     end
