@@ -2,27 +2,24 @@ import "scripts/PlayerBow"
 import "scripts/PartnerBow"
 import "scripts/Scenario"
 import "scripts/Cutscene"
-
-local pd <const> = playdate
-local gfx <const> = pd.graphics
+import "scripts/CharacterSprite"
 
 -- ScenarioKombini class that extends the Scenario class and represents the Kombini scenario in the game.
 class("ScenarioKombini").extends(Scenario)
 
 local pd = playdate
-local gfx = pd.graphics
 
 -- Player
 local playerSprite = CharacterSprite(
-    "images/player/playerBottom.png",
-    "images/player/playerSpriteSheet-table-400-240.png",
+    "images/player/characterLegsPrototype.png",
+    "images/player/characterMovingPrototype.png",
     0)
 local playerObj = Player(playerSprite, 130, 100, 3)
 playerSprite:add()
 
 -- Partner
 local partnerSprite = CharacterSprite(
-    "images/player/playerBottom.png",
+    "images/player/characterLegsPrototype.png",
     "images/player/clerkSpriteSheet-table-400-240.png",
     0)
 local partnerObj = Partner(partnerSprite, 500, 100, 3)

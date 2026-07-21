@@ -27,6 +27,5 @@ function Bowing:setBowFrameIndex(bowDistance)
     --and chooses corresponding frame
     local bowFrameIndex = math.floor(bowDistance / 100 * 17) + 1
     self.character_sprite:change_current_image(bowFrameIndex)
-    print(bowFr)
     return bowFrameIndex
 end
