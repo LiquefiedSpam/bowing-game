@@ -25,6 +25,7 @@ local partnerObj = Partner(partnerSprite, 500, 100, 3)
 local Actions = { --for now we can just make sure in the code to not select an action
     --that doesn't work with the current location I guess
     CHECKOUT = 1,
+    CHECKOUT_DOUBLE_BOW = 2
 }
 
 function ScenarioKombini:init(scenario_type)
@@ -61,7 +62,23 @@ function ScenarioKombini:init(scenario_type)
             2,
             1,
             1,
-            self.partner_bow_table,
+            self.bow_intervals_for_player,
+            0.5
+        )
+    elseif scenario_type == Actions.CHECKOUT_DOUBLE_BOW then
+        self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
+        ScenarioKombini.super.init(
+            self,
+            "Checkout Double Bow",
+            self.cutscene,
+            10,
+            20,
+            5,
+            1,
+            2,
+            1,
+            1,
+            self.bow_intervals_for_player,
             0.5
         )
     else
@@ -88,12 +105,44 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT()
         local reset_position = 1
         local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
         table.insert(partner_bow_table, partner_bow)
-        table.insert(self.bow_intervals_for_player, bow_start_time)
+        table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 1 })
         totalTime = bow_start_time + bow_duration + 0.5 -- 0.5 is a small extra time increment
 
         print("Partner Bow Table:")
         partner_bow:printBowDetails()
     end
+    print("Generated partner bow table for CHECKOUT scenario with " .. num_bows .. " bows.")
+    return partner_bow_table
+end
+
+function ScenarioKombini:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
+    local num_bows = 2
+    local totalTime = 0
+    local partner_bow_table = {}
+
+    -- bow one
+    local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
+    local bow_duration = 0.5 + math.random(-2, 2) / 6
+    local deepness = 8 + math.random(-2, 2)
+    local reset_position = 1
+
+    local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
+    table.insert(partner_bow_table, partner_bow)
+    table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 1 })
+
+    totalTime = bow_start_time + bow_duration + 0.5 -- 0.5 is a small extra time increment
+
+    -- bow two
+    local bow_start_time = totalTime + math.random(0, 1) / 2 + 2
+    local bow_duration = 0.5 + math.random(-2, 2) / 6
+    local deepness = 8 + math.random(-2, 2)
+    local reset_position = 1
+    local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
+    table.insert(partner_bow_table, partner_bow)
+    table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 1 })
+
+
+
     print("Generated partner bow table for CHECKOUT scenario with " .. num_bows .. " bows.")
     return partner_bow_table
 end

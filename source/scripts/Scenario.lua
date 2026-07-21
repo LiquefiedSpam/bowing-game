@@ -55,24 +55,25 @@ end
 
 -- checks the player's bowing events (in terms of time) and ensures that they are in the correct order.
 -- this compares required intervals with player bowing times (with forgiveness)
--- player_intervals is a table of decimal values that represents the times at which the player bowed during the scenario
+-- player_intervals is a table of interval tables that represents the times at which the player bowed during the scenario
 -- if it is correct, then return true. Else, return false.
 function Scenario:checkOrderOfEvents(player_intervals)
     for i = 1, #self.player_bowing_intervals do
         local checked_interval = self.player_bowing_intervals[i]
-        local correct_inveral = false
+        local checked_interval_start = type(checked_interval) == "table" and checked_interval[1] or checked_interval
+        local correct_interval = false
 
         for j = 1, #player_intervals do
             local player_interval = player_intervals[j]
             local player_bow_start = player_interval[1]
 
-            if math.abs(checked_interval - player_bow_start) <= self.player_bowing_intervals_forgiveness then
-                correct_inveral = true
+            if math.abs(checked_interval_start - player_bow_start) <= self.player_bowing_intervals_forgiveness then
+                correct_interval = true
                 break
             end
         end
 
-        if not correct_inveral then
+        if not correct_interval then
             return false
         end
     end
