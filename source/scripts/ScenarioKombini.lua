@@ -151,6 +151,7 @@ function ScenarioKombini:runOutro()
     return false
 end
 
-function ScenarioKombini:Destruct()
-
+function ScenarioKombini:destruct()
+    self.playerSprite:removeSprite()
+    self.partnerSprite:removeSprite()
 end

@@ -194,6 +194,7 @@ function ScenarioManager:RunOutro()
 
     local outro_result = self.currentScenario:runOutro()
     if outro_result and self.totalTimeGivenSec >= timer then
+        self.currentScenario:destruct()
         self:ConstructScenario()
         self.currentState = ScenarioState.CUTSCENE
     elseif outro_result and self.totalTimeGivenSec < timer then
