@@ -28,14 +28,14 @@ end
 
 function Cutscene:animation_sequence()
     boxes_sprite:draw(0, 0)
-    pd.wait(1000)
+    pd.wait(750)
     self.image_one_path:draw(17, 64)
     box_sfx:play()
-    pd.wait(1000)
+    pd.wait(750)
     self.image_two_path:draw(145, 64)
     box_sfx:play()
-    pd.wait(1000)
+    pd.wait(750)
     self.image_three_path:draw(273, 64)
     box_sfx:play()
-    pd.wait(1000)
+    pd.wait(750)
 end

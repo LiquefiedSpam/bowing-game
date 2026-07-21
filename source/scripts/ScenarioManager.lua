@@ -35,8 +35,6 @@ local timer = 0
 
 local dt = 0
 
-local bowTimeStamps = {}
-
 local score = 0
 
 function ScenarioManager:init()
@@ -164,9 +162,11 @@ function ScenarioManager:RunScoring()
     for key, value in ipairs(self.playerObj.bow_table) do
         if type(value) == "table" then
             print("Bow: " ..
-            key ..
-            ", Starting Bow Frame: " ..
-            tostring(value:getCurrentBowFrame()) .. ", CurrentBowFrame: " .. tostring(value:getCurrentLowestBowFrame()) .. ", Bow Timer: " .. tostring(value:getBowTimer()))
+                key ..
+                ", Starting Bow Frame: " ..
+                tostring(value:getCurrentBowFrame()) ..
+                ", CurrentBowFrame: " ..
+                tostring(value:getCurrentLowestBowFrame()) .. ", Bow Timer: " .. tostring(value:getBowTimer()))
         else
             print("Bow Interval: " .. key .. ", Value: " .. tostring(value))
         end

@@ -4,14 +4,10 @@ import "scripts/Scenario"
 import "scripts/Cutscene"
 import "scripts/CharacterSprite"
 
-local pd <const> = playdate
-local gfx <const> = pd.graphics
-
 -- ScenarioKombini class that extends the Scenario class and represents the Kombini scenario in the game.
 class("ScenarioKombini").extends(Scenario)
 
 local pd = playdate
-local gfx = pd.graphics
 
 -- Player
 local playerSprite = CharacterSprite(
