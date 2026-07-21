@@ -14,18 +14,18 @@ function Bowing:init(character_sprite, x_position, y_position, speed)
     self.bow_range = 180
 end
 
--- sets the `bowFrameIndex` based on object's current `bowValue`, and adjust the sprite's image accordingly
-function Bowing:setBowFrameIndex(bowDistance)
-    --translate crank position to a percentage of bow from 0 to 100. 0 is upright,
-    -- 100 is maximum bow.
-    if bowDistance > 180 then
-        bowDistance = 360 - bowDistance
-    end
-    bowDistance = (bowDistance / self.bow_range) * 100
+-- -- sets the `bowFrameIndex` based on object's current `bowValue`, and adjust the sprite's image accordingly
+-- function Bowing:setBowFrameIndex(bowDistance)
+--     --translate crank position to a percentage of bow from 0 to 100. 0 is upright,
+--     -- 100 is maximum bow.
+--     if bowDistance > 180 then
+--         bowDistance = 360 - bowDistance
+--     end
+--     bowDistance = (bowDistance / self.bow_range) * 100
 
-    --choose frame based on crank angle. Rounds to nearest whole number 0-10
-    --and chooses corresponding frame
-    local bowFrameIndex = math.floor(bowDistance / 100 * 17) + 1
-    self.character_sprite:change_current_image(bowFrameIndex)
-    return bowFrameIndex
-end
+--     --choose frame based on crank angle. Rounds to nearest whole number 0-10
+--     --and chooses corresponding frame
+--     local bowFrameIndex = math.floor(bowDistance / 100 * 17) + 1
+--     self.character_sprite:change_current_image(bowFrameIndex)
+--     return bowFrameIndex
+--end

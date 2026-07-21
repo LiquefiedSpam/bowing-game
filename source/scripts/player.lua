@@ -33,41 +33,24 @@ function Player:setUp()
 end
 
 function Player:setInitialCrankPos(crankPos)
-    self.initial_crank_pos = crankPos
+    if crankPos == 0 then
+        self.initial_crank_pos = 1
+    else
+        self.initial_crank_pos = crankPos
+    end
+    self.max_crank_num = crankPos + self.bow_range
 end
 
 -- Sets the current frame of the player sprite based on the position of the crank.
 -- param crankPosition (number): The position of the crank, which will be translated into a bow frame index (0-360)
 -- param currentTime (number): The current time in seconds since the start of the scenario
 function Player:setBowFrameIndex(crankPosition, currentTime)
-    if self.last_crank_position == nil then
-        self.last_crank_position = crankPosition
+    if crankPosition >= self.initial_crank_pos and crankPosition <= self.max_crank_num then
+        self.current_frame = math.floor((crankPosition - self.initial_crank_pos) / self.bow_frame_length)
     end
+    self.character_sprite:change_current_image(self.current_frame)
 
-    if self.last_crank_position ~= crankPosition then
-        local progress_current_frame_update = self.progress_in_current_frame + (crankPosition - self.last_crank_position)
-
-        --if we should switch frames, keep doing so until we stop
-        while progress_current_frame_update < 0 do
-            progress_current_frame_update = self.bow_frame_length + progress_current_frame_update
-
-            --don't progress past max amt of frames or go below 1
-            if (self.current_frame == 1 or self.current_frame == self.max_bow_frames) then
-                self.progress_current_frame = 0
-                break;
-            end
-
-            self.current_frame = self.current_frame - 1
-        end
-
-        self.progress_in_current_frame = progress_current_frame_update
-
-
-        if progress_current_frame_update > self.bow_frame_length then
-        end
-    end
-
-    local bowFrameIndex = Player.super.setBowFrameIndex(self, crankPosition)
+    local bowFrameIndex = self.current_frame
     -- print("Bows: " .. self.current_bow_num .. " | Current Bow Frame Index: " ..
     --     bowFrameIndex .. " | Current Lowest Bow Frame: " .. self.current_lowest_bow_frame)
 
