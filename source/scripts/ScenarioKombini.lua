@@ -172,5 +172,4 @@ function ScenarioKombini:runOutro()
 end
 
 function ScenarioKombini:Destruct()
-
 end
