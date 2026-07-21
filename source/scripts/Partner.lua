@@ -20,9 +20,10 @@ end
 -- returns whether the bow is complete
 function Partner:adjustBowPosition(partnerBow, current_time)
     local current_frame = self.character_sprite.current_image_index
+    local bow_start_time = partnerBow:getTimeStart()
     local deepness = partnerBow:getDeepness()
     local reset_position = partnerBow:getResetPosition()
-    local bow_deep_time = partnerBow:getTimeStart() + partnerBow:getDuration()
+    local bow_deep_time = partnerBow:getDuration()
     -- print("Current Frame: " ..
     --     current_frame ..
     --     ", Deepness: " ..
@@ -38,7 +39,10 @@ function Partner:adjustBowPosition(partnerBow, current_time)
         end
     end
 
-    if current_time < bow_deep_time then
+    if current_time < bow_start_time then
+        self.in_lowest_bow_frame = false
+        stepTowards(reset_position)
+    elseif current_time < bow_start_time + bow_deep_time then
         self.in_lowest_bow_frame = false
         stepTowards(deepness)
     else
