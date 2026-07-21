@@ -1,4 +1,5 @@
 import "scripts/PartnerBow"
+import "scripts/PlayerBow"
 
 -- class for a scenario, which is a collection of events that can happen in the game
 class("Scenario").extends()
@@ -66,8 +67,9 @@ function Scenario:checkOrderOfEvents(player_intervals)
 
         for j = 1, #player_intervals do
             local player_interval = player_intervals[j]
+            local player_bow_start = player_interval[1]
 
-            if math.abs(checked_interval - player_interval) <= self.player_bowing_intervals_forgiveness then
+            if math.abs(checked_interval - player_bow_start) <= self.player_bowing_intervals_forgiveness then
                 correct_inveral = true
                 break
             end
