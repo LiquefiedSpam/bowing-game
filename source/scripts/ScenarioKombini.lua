@@ -174,4 +174,5 @@ end
 function ScenarioKombini:destruct()
     self.playerSprite:removeSprite()
     self.partnerSprite:removeSprite()
+    --hi
 end
