@@ -7,10 +7,9 @@ local pd = playdate
 local gfx = pd.graphics
 
 -- Requires: bottom_sprite (string), sprite_sheet (string)
-function CharacterSprite:init(bottom_sprite, sprite_sheet)
-    self.bottom_sprite = gfx.image.new(bottom_sprite)
+function CharacterSprite:init(sprite_sheet)
     self.top_sprite_sheet = gfx.imagetable.new(sprite_sheet)
-
+    self.current_image = self.top_sprite_sheet:getImage(1)
 
     --walking state for the walk-in animation
     -- state for the walk-in animation

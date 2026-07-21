@@ -11,19 +11,15 @@ local pd = playdate
 
 -- Player
 local playerSprite = CharacterSprite(
-    "images/player/characterLegsPrototype.png",
-    "images/player/characterMovingPrototype.png",
+    "images/player/spriteSheet-table-400-240",
     0)
 local playerObj = Player(playerSprite, 130, 100, 3)
-playerSprite:add()
 
 -- Partner
 local partnerSprite = CharacterSprite(
-    "images/player/characterLegsPrototype.png",
-    "images/player/clerkSpriteSheet-table-400-240.png",
+    "images/player/clerkSpriteSheet-table-400-240",
     0)
 local partnerObj = Partner(partnerSprite, 500, 100, 3)
-partnerSprite:add()
 
 local Actions = { --for now we can just make sure in the code to not select an action
     --that doesn't work with the current location I guess
