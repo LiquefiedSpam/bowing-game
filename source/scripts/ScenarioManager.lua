@@ -136,7 +136,7 @@ function ScenarioManager:RunGameplay()
         error("No scenario has been created. Cannot run gameplay sequence.")
     end
 
-    --timer += dt
+    timer += dt
     --dummy ending for a scenario
     if timer > self.currentScenario:getTotalTimeProvided() then
         self.currentState = ScenarioState.SCORING
@@ -144,10 +144,6 @@ function ScenarioManager:RunGameplay()
 
     self.playerObj = self.currentScenario:updatePlayerBowing(timer)
     local partnerObj = self.currentScenario:updatePartnerBowing(timer)
-
-    -- if pd.buttonJustPressed() then
-    --     partnerObj:setCurrentFrame(16)
-    -- end
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
     gfx.drawTextAligned("Bows: " .. self.playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)

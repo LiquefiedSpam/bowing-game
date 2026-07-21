@@ -129,3 +129,6 @@ end
 function Scenario:getTotalTimeProvided()
     return self.total_time_provided
 end
+
+function Scenario:Destruct()
+end

@@ -21,7 +21,7 @@ local playerObj = Player(playerSprite, 130, 100, 3)
 
 -- Partner
 local partnerSprite = CharacterSprite(
-    "images/player/clerkSpriteSheet-table-400-240",
+    "images/player/clerkSpriteSheet3-table-400-240",
     0)
 local partnerObj = Partner(partnerSprite, 500, 100, 3)
 
@@ -130,8 +130,8 @@ function ScenarioKombini:runOutro()
     if not playerSprite.startedWalkingIn then
         playerSprite:change_current_image(1)
         partnerSprite:change_current_image(1)
-        playerSprite:startWalkIn(false, -100)
-        partnerSprite:startWalkIn(true, 500)
+        playerSprite:startWalkIn(false, true)
+        partnerSprite:startWalkIn(true, false)
     end
 
     if playerSprite.startedWalkingIn then
@@ -144,4 +144,8 @@ function ScenarioKombini:runOutro()
     end
 
     return false
+end
+
+function ScenarioKombini:Destruct()
+
 end
