@@ -15,7 +15,7 @@ local gfx = pd.graphics
 
 -- Player
 local playerSprite = CharacterSprite(
-    "images/player/playerSpriteSheet-table-400-240",
+    "images/player/spriteSheet-table-400-240",
     0)
 local playerObj = Player(playerSprite, 130, 100, 3)
 
