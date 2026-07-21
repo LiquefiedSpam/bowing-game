@@ -80,5 +80,7 @@ end
 -- Sets the current frame of the partner sprite based on the provided image index
 -- param image_index (number): The index of the image in the sprite sheet to set as the current frame (1-18)
 function Partner:setCurrentFrame(image_index)
-    self.character_sprite:change_current_image(image_index)
+    if image_index >= 1 and image_index <= 18 then
+        self.character_sprite:change_current_image(image_index)
+    end
 end

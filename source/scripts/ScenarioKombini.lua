@@ -8,6 +8,19 @@ import "scripts/CharacterSprite"
 class("ScenarioKombini").extends(Scenario)
 
 local pd = playdate
+local gfx = pd.graphics
+
+-- Player
+local playerSprite = CharacterSprite(
+    "images/player/spriteSheet-table-400-240",
+    0)
+local playerObj = Player(playerSprite, 130, 100, 3)
+
+-- Partner
+local partnerSprite = CharacterSprite(
+    "images/player/clerkSpriteSheet3-table-400-240",
+    0)
+local partnerObj = Partner(partnerSprite, 500, 100, 3)
 
 local Actions = { --for now we can just make sure in the code to not select an action
     --that doesn't work with the current location I guess
@@ -139,11 +152,11 @@ function ScenarioKombini:getTotalTimeProvided()
 end
 
 function ScenarioKombini:runOutro()
-    if not self.playerSprite.startedWalkingIn then
-        self.playerSprite:change_current_image(1)
-        self.partnerSprite:change_current_image(1)
-        self.playerSprite:startWalkIn(false, -100)
-        self.partnerSprite:startWalkIn(true, 500)
+    if not playerSprite.startedWalkingIn then
+        playerSprite:change_current_image(1)
+        partnerSprite:change_current_image(1)
+        playerSprite:startWalkIn(false, true)
+        partnerSprite:startWalkIn(true, false)
     end
 
     if self.playerSprite.startedWalkingIn then
@@ -156,4 +169,8 @@ function ScenarioKombini:runOutro()
     end
 
     return false
+end
+
+function ScenarioKombini:Destruct()
+
 end
