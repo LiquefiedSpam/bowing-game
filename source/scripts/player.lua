@@ -30,13 +30,20 @@ end
 function Player:setUp()
     self.character_sprite:moveTo(self.x, self.y)
     self.character_sprite:add()
-    self.last_crank_position = pd.getCrankPosition()
+end
+
+function Player:setInitialCrankPos(crankPos)
+    self.initial_crank_pos = crankPos
 end
 
 -- Sets the current frame of the player sprite based on the position of the crank.
 -- param crankPosition (number): The position of the crank, which will be translated into a bow frame index (0-360)
 -- param currentTime (number): The current time in seconds since the start of the scenario
 function Player:setBowFrameIndex(crankPosition, currentTime)
+    if self.last_crank_position == nil then
+        self.last_crank_position = crankPosition
+    end
+
     if self.last_crank_position ~= crankPosition then
         local progress_current_frame_update = self.progress_in_current_frame + (crankPosition - self.last_crank_position)
 

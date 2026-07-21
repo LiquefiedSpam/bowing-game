@@ -108,6 +108,7 @@ function ScenarioKombini:runIntro()
     end
 
     if self.playerSprite.hasWalkedIn then
+        self.playerObj:setInitialCrankPos(pd.getCrankPosition())
         return true
     end
 

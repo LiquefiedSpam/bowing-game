@@ -120,6 +120,5 @@ function CharacterSprite:setImageFlip(flip)
 end
 
 function CharacterSprite:removeSprite()
-    print("called!")
     self.playerSprite:remove()
 end
