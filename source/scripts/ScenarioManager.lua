@@ -35,8 +35,6 @@ local timer = 0
 
 local dt = 0
 
-local bowTimeStamps = {}
-
 local score = 0
 
 function ScenarioManager:init()
@@ -44,6 +42,7 @@ function ScenarioManager:init()
     self.currentState = ScenarioState.INTERVAL
     self.currentScenario = nil
     self.playerObj = nil
+    self.totalTimeGivenSec = 60
 end
 
 function ScenarioManager:update()
@@ -194,8 +193,11 @@ function ScenarioManager:RunOutro()
     end
 
     local outro_result = self.currentScenario:runOutro()
-    if outro_result then
+    if outro_result and self.totalTimeGivenSec >= timer then
+        self:ConstructScenario()
+        self.currentState = ScenarioState.CUTSCENE
+    elseif outro_result and self.totalTimeGivenSec < timer then
         self.currentState = ScenarioState.INTERVAL
-        self.currentScenario = nil
+        self.currentAction = nil
     end
 end
