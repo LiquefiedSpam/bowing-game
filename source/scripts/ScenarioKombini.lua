@@ -58,7 +58,7 @@ function ScenarioKombini:init(scenario_type)
             { 1, 2, 3 },
             3
         )
-        self.partner_bow_table = { PartnerBow(0, 2, 4, 1), PartnerBow(2, 2, 4, 1), PartnerBow(4, 2, 4, 1) }
+        self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT()
         self.partner_bow_index = 1
         self.bows_complete = false
     else
@@ -72,6 +72,26 @@ end
 -- sets and returns the player_humility_score property based on the player's performance and the conditions of the scenario
 function ScenarioKombini:calculateScore(player_bow_table, player_intervals)
     return ScenarioKombini.super.calculateScore(self, player_bow_table, player_intervals)
+end
+
+function ScenarioKombini:generatePartnerBowTable_CHECKOUT()
+    local num_bows = 1
+    local totalTime = 1
+    local partner_bow_table = {}
+    for i = 1, num_bows do
+        local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
+        local bow_duration = 0.5 + math.random(-2, 2) / 6
+        local deepness = 8 + math.random(-2, 2)
+        local reset_position = 1
+        local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
+        table.insert(partner_bow_table, partner_bow)
+        totalTime = bow_start_time + bow_duration + 0.5 -- 0.5 is a small extra time increment
+
+        print("Partner Bow Table:")
+        partner_bow:printBowDetails()
+    end
+    print("Generated partner bow table for CHECKOUT scenario with " .. num_bows .. " bows.")
+    return partner_bow_table
 end
 
 -- Runs the intro sequence for the Kombini scenario, which includes the player and partner walking into the scene.

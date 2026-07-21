@@ -29,3 +29,11 @@ end
 function PartnerBow:getResetPosition()
     return self.resetPosition
 end
+
+function PartnerBow:printBowDetails()
+    print("Partner Bow Details:")
+    print("Time Start: " .. self.timeStart)
+    print("Duration: " .. self.duration)
+    print("Deepness: " .. self.deepness)
+    print("Reset Position: " .. self.resetPosition)
+end
