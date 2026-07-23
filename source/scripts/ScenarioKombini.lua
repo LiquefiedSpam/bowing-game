@@ -139,7 +139,7 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
     totalTime = bow_start_time + bow_duration + 0.5 -- 0.5 is a small extra time increment
 
     -- bow two
-    local bow_start_time = totalTime + math.random(0, 1) / 2 + 2
+    local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
     local bow_duration = 0.5 + math.random(-2, 2) / 6
     local deepness = 8 + math.random(-2, 2)
     local reset_position = 1
@@ -183,6 +183,12 @@ end
 function ScenarioKombini:updatePlayerBowing(currentTime)
     self.playerObj:setBowFrameIndex(pd.getCrankPosition(), currentTime)
     return self.playerObj
+end
+
+-- Checks whether movement has been detected for more than a set duration. If not, end the scene prematurely.
+-- Returns a boolean that indicates whether movement has been detected (true) or not (false).
+function ScenarioKombini:checkPlayerMovement(current_player_position, current_partner_position, delta_time)
+    return ScenarioKombini.super.checkPlayerMovement(self, current_player_position, current_partner_position, delta_time)
 end
 
 -- Updates the partner's bowing state based on time
@@ -234,5 +240,4 @@ end
 function ScenarioKombini:destruct()
     self.playerSprite:removeSprite()
     self.partnerSprite:removeSprite()
-    --hi
 end

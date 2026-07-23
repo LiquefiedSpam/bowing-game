@@ -34,6 +34,11 @@ function Scenario:init(
     self.player_bowing_intervals_forgiveness = player_bowing_intervals_forgiveness
     self.calculatedScore = false
     self.total_time_provided = 6
+
+    self.current_player_bow_position = 1
+    self.current_partner_bow_position = 1
+    self.bow_afk_timer = 0
+    self.bow_afk_timer_max = 2
 end
 
 -- returns a string result representing the score of the scenario based on the player's performance and the conditions of the scenario
@@ -122,6 +127,25 @@ end
 
 function Scenario:getTotalTimeProvided()
     return self.total_time_provided
+end
+
+-- Checks whether movement has been detected for more than a set duration. If not, end the scene prematurely.
+-- Returns a boolean that indicates whether movement has been detected (true) or not (false).
+function Scenario:checkPlayerMovement(current_player_position, current_partner_position, delta_time)
+    if self.bow_afk_timer >= self.bow_afk_timer_max then
+        print("No movement has been detected for " .. self.bow_afk_timer_max .. " seconds. Ending scene.")
+        return false
+    end
+
+    if current_player_position ~= self.current_player_bow_position or current_partner_position ~= self.current_partner_bow_position then
+        self.current_player_bow_position = current_player_position
+        self.current_partner_bow_position = current_partner_position
+        self.bow_afk_timer = 0
+    else
+        self.bow_afk_timer += delta_time
+    end
+
+    return true
 end
 
 function Scenario:Destruct()

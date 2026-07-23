@@ -125,3 +125,7 @@ end
 function Player:getBowTimer()
     return self.current_bow_timer
 end
+
+function Player:getCurrentBowFrame()
+    return self.current_frame
+end

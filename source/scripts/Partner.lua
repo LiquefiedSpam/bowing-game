@@ -8,6 +8,7 @@ function Partner:init(character_sprite, x_position, y_position, speed)
     Partner.super.init(self, character_sprite, x_position, y_position, speed)
     self.setUp(self)
     self.in_lowest_bow_frame = false
+    self.current_frame = 0
 end
 
 -- Set up the partner sprite and any other necessary properties
@@ -19,7 +20,7 @@ end
 -- adjusts the bow position of the partner sprite based on the provided PartnerBow object
 -- returns whether the bow is complete
 function Partner:adjustBowPosition(partnerBow, current_time)
-    local current_frame = self.character_sprite.current_image_index
+    self.current_frame = self.character_sprite.current_image_index
     local bow_start_time = partnerBow:getTimeStart()
     local deepness = partnerBow:getDeepness()
     local reset_position = partnerBow:getResetPosition()
@@ -32,10 +33,10 @@ function Partner:adjustBowPosition(partnerBow, current_time)
     --     reset_position .. ", Current Time: " .. current_time .. ", Bow Deep Time: " .. bow_deep_time)
 
     local function stepTowards(target_frame)
-        if current_frame < target_frame then
-            self:setCurrentFrame(current_frame + 1)
-        elseif current_frame > target_frame then
-            self:setCurrentFrame(current_frame - 1)
+        if self.current_frame < target_frame then
+            self:setCurrentFrame(self.current_frame + 1)
+        elseif self.current_frame > target_frame then
+            self:setCurrentFrame(self.current_frame - 1)
         end
     end
 
@@ -48,7 +49,7 @@ function Partner:adjustBowPosition(partnerBow, current_time)
     else
         self.in_lowest_bow_frame = true
 
-        if current_frame == reset_position then
+        if self.current_frame == reset_position then
             self.in_lowest_bow_frame = false
             return true
         end
@@ -82,5 +83,10 @@ end
 function Partner:setCurrentFrame(image_index)
     if image_index >= 1 and image_index <= 18 then
         self.character_sprite:change_current_image(image_index)
+        self.current_frame = image_index
     end
+end
+
+function Partner:getCurrentBowFrame()
+    return self.current_frame
 end
