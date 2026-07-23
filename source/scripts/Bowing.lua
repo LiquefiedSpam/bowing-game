@@ -10,7 +10,7 @@ function Bowing:init(character_sprite, x_position, y_position, speed)
     self.x = x_position
     self.y = y_position
     self.speed = speed
-    self.max_bow_frames = 18
+    self.max_bow_frames = 10
     self.bow_range = 180
 end
 

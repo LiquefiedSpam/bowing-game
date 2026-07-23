@@ -73,7 +73,9 @@ function CharacterSprite:updateWalkIn()
     self.playerSprite:moveTo(newX, self.baseY + bounceOffset)
 end
 
---start the walk-in 'animation'
+--start the walk-in 'animation.'
+--walkIn: boolean. True means the character is walking right, false means left.
+--isPlayer: boolean. True if we are dealing with player sprite, false if partner sprite.
 function CharacterSprite:startWalkIn(walkIn, isPlayer)
     self.hasWalkedIn = false
     self.startedWalkingIn = true
@@ -99,8 +101,8 @@ function CharacterSprite:startWalkIn(walkIn, isPlayer)
             self.walkTarget = 0
             self.walkSpeed = -3
         else
-            self.playerSprite:moveTo(550, self.baseY) -- start off-screen, 600 is dummy approximate value
-            self.walkTarget = 430                     -- dummy approximate value
+            self.playerSprite:moveTo(250, self.baseY) -- start off-screen, 600 is dummy approximate value
+            self.walkTarget = 200                     -- dummy approximate value
             self.walkSpeed = -3
         end
     end

@@ -10,17 +10,17 @@ class("ScenarioKombini").extends(Scenario)
 local pd = playdate
 local gfx = pd.graphics
 
--- Player
-local playerSprite = CharacterSprite(
-    "images/player/spriteSheet-table-400-240",
-    0)
-local playerObj = Player(playerSprite, 130, 100, 3)
+-- -- Player
+-- local playerSprite = CharacterSprite(
+--     "images/player/playerSpriteSheet-table-400-240",
+--     0)
+-- local playerObj = Player(playerSprite, 130, 100, 3)
 
--- Partner
-local partnerSprite = CharacterSprite(
-    "images/player/clerkSpriteSheet3-table-400-240",
-    0)
-local partnerObj = Partner(partnerSprite, 500, 100, 3)
+-- -- Partner
+-- local partnerSprite = CharacterSprite(
+--     "images/player/clerkSpriteSheet3-table-400-240",
+--     0)
+-- local partnerObj = Partner(partnerSprite, 500, 100, 3)
 
 local Actions = { --for now we can just make sure in the code to not select an action
     --that doesn't work with the current location I guess
@@ -28,20 +28,26 @@ local Actions = { --for now we can just make sure in the code to not select an a
     CHECKOUT_DOUBLE_BOW = 2
 }
 
+local bg = gfx.image.new("images/background/konbiniSmallBackground.png")
+local bg_sprite = gfx.sprite.new(bg)
+
+
 function ScenarioKombini:init(scenario_type)
+    bg_sprite:moveTo(110, 120)
+    bg_sprite:add()
     self.playerSprite = CharacterSprite(
-        "images/player/spriteSheet-table-400-240",
+        "images/player/playerSpriteSheet2-table-400-240",
         0)
     self.playerObj = Player(self.playerSprite, 130, 100, 3)
 
     self.partnerSprite = CharacterSprite(
-        "images/player/clerkSpriteSheet-table-400-240",
+        "images/player/clerkSpriteSheet4-table-400-240",
         0)
     self.partnerObj = Partner(self.partnerSprite, 500, 100, 3)
 
     self.cutscene = Cutscene(
         "images/background/temp-box1.png",
-        "images/background/temp-box2.png",
+        "images/background/moneyTransfer.png",
         "images/background/temp-box3.png")
 
 
@@ -151,8 +157,8 @@ end
 -- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
 function ScenarioKombini:runIntro()
     if not self.playerSprite.startedWalkingIn then
-        self.playerSprite:startWalkIn(true, 100)
-        self.partnerSprite:startWalkIn(false, 100)
+        self.playerSprite:startWalkIn(true, true)
+        self.partnerSprite:startWalkIn(false, false)
     end
 
     if self.playerSprite.startedWalkingIn then
