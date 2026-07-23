@@ -44,6 +44,7 @@ function ScenarioManager:init()
     self.currentState = ScenarioState.INTERVAL
     self.currentScenario = nil
     self.playerObj = nil
+    self.partnerObj = nil
     self.totalTimeGivenSec = 60
 end
 
@@ -149,7 +150,14 @@ function ScenarioManager:RunGameplay()
     end
 
     self.playerObj = self.currentScenario:updatePlayerBowing(timer)
-    local partnerObj = self.currentScenario:updatePartnerBowing(timer)
+    self.partnerObj = self.currentScenario:updatePartnerBowing(timer)
+    local player_moved = self.currentScenario:checkPlayerMovement(
+        self.playerObj:getCurrentBowFrame(),
+        self.partnerObj:getCurrentBowFrame(),
+        dt)
+    if not player_moved then
+        self.currentState = ScenarioState.SCORING
+    end
 
     gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
     gfx.drawTextAligned("Bows: " .. self.playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
