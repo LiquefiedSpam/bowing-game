@@ -47,7 +47,7 @@ function ScenarioKombini:init(scenario_type)
 
     self.cutscene = Cutscene(
         "images/background/temp-box1.png",
-        "images/background/temp-box2.png",
+        "images/background/moneyTransfer.png",
         "images/background/temp-box3.png")
 
 
