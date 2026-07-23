@@ -39,6 +39,9 @@ function Scenario:init(
     self.current_partner_bow_position = 1
     self.bow_afk_timer = 0
     self.bow_afk_timer_max = 2
+
+    self.emote_player = nil
+    self.emote_partner = nil
 end
 
 -- returns a string result representing the score of the scenario based on the player's performance and the conditions of the scenario
