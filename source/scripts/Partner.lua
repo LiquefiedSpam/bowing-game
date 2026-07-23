@@ -58,24 +58,6 @@ function Partner:adjustBowPosition(partnerBow, current_time)
     end
 
     return false
-
-    -- if current_time < bow_deep_time then
-    --     if current_frame < deepness then
-    --         self:setCurrentFrame(current_frame + 1)
-    --     elseif current_frame > deepness then
-    --         self:setCurrentFrame(current_frame - 1)
-    --     else
-    --         self.in_lowest_bow_frame = true
-    --     end
-    -- else
-    --     self.in_lowest_bow_frame = false
-
-    --     if current_frame < reset_position then
-    --         self:setCurrentFrame(current_frame + 1)
-    --     elseif current_frame > reset_position then
-    --         self:setCurrentFrame(current_frame - 1)
-    --     end
-    -- end
 end
 
 -- Sets the current frame of the partner sprite based on the provided image index
