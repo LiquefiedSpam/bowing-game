@@ -224,17 +224,53 @@ function ScenarioKombini:runOutro(dt)
         self.playerSprite:change_current_image(1)
         self.partnerSprite:change_current_image(1)
         if self.emote_player ~= nil and self.emote_partner ~= nil then
+<<<<<<< HEAD
+            if timer > 1.33 then
+                self.emote_player:moveTo(100, 120)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 100)
+                self.emote_partner:add()
+                timer = timer + dt
+            elseif timer > 0.99 then
+                self.emote_player:moveTo(100, 115)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 105)
+                self.emote_partner:add()
+                timer = timer + dt
+            elseif timer > 0.66 then
+                self.emote_player:moveTo(100, 110)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 100)
+                self.emote_partner:add()
+                timer = timer + dt
+            elseif timer > 0.33 then
+                self.emote_player:moveTo(100, 105)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 105)
+                self.emote_partner:add()
+                timer = timer + dt
+            elseif timer >= 0 then
+                self.emote_player:moveTo(100, 100)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 100)
+                self.emote_partner:add()
+                timer = timer + dt
+            end
+
+=======
             self.emote_player:moveTo(100, 100)
             self.emote_player:add()
             self.emote_partner:moveTo(300, 100)
             self.emote_partner:add()
             timer = timer + dt
+>>>>>>> 9d39407310457078d74ec992913ccce7a1957dda
             if timer > 1.5 then
                 self.playerSprite:startWalkIn(false, true)
                 --self.partnerSprite:startWalkIn(true, false)
                 self.emote_partner:remove()
                 self.emote_player:remove()
                 timer = 0
+                return true
             else
                 return false
             end

@@ -199,16 +199,20 @@ function ScenarioManager:RunScoring()
     print("Scoring Result: " .. tostring(scoring_result))
     local score_status = self.currentScenario:score()
     if score_status == "LOW" then
-        local player_low_image = pd.graphics.image.new("images/emotes/dreadlines.png")
+        local player_low_image = pd.graphics.image.new("images/emotes/sweat_teardrop.png")
         self.currentScenario.emote_player = pd.graphics.sprite.new(player_low_image)
         local partner_low_image = pd.graphics.image.new("images/emotes/question_mark.png")
         self.currentScenario.emote_partner = pd.graphics.sprite.new(partner_low_image)
-    else
-        if score_status == "MEDIUM" then
-        else
-            if score_status == "HIGH" then
-            end
-        end
+    elseif score_status == "MEDIUM" then
+        -- local player_medium_image = pd.graphics.image.new("images/emotes/confused.png")
+        -- self.currentScenario.emote_player = pd.graphics.sprite.new(player_medium_image)
+        -- local partner_medium_image = pd.graphics.image.new("images/emotes/confused.png")
+        -- self.currentScenario.emote_partner = pd.graphics.sprite.new(partner_medium_image)
+    elseif score_status == "HIGH" then
+        local player_high_image = pd.graphics.image.new("images/emotes/blank.png")
+        self.currentScenario.emote_player = pd.graphics.sprite.new(player_high_image)
+        local partner_high_image = pd.graphics.image.new("images/emotes/thumbs_up.png")
+        self.currentScenario.emote_partner = pd.graphics.sprite.new(partner_high_image)
     end
 
     if scoring_result then
@@ -216,7 +220,7 @@ function ScenarioManager:RunScoring()
     end
 end
 
-function ScenarioManager:RunOutro(dt)
+function ScenarioManager:RunOutro()
     if self.currentScenario == nil then
         error("No scenario has been created. Cannot run outro sequence.")
     end
