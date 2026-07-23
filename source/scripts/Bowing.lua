@@ -11,7 +11,7 @@ function Bowing:init(character_sprite, x_position, y_position, speed)
     self.y = y_position
     self.speed = speed
     self.max_bow_frames = 10
-    self.bow_range = 180
+    self.bow_range = 160
 end
 
 -- -- sets the `bowFrameIndex` based on object's current `bowValue`, and adjust the sprite's image accordingly

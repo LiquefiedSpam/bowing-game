@@ -31,6 +31,8 @@ local Actions = { --for now we can just make sure in the code to not select an a
 local bg = gfx.image.new("images/background/konbiniSmallBackground.png")
 local bg_sprite = gfx.sprite.new(bg)
 
+local timer = 0
+
 
 function ScenarioKombini:init(scenario_type)
     bg_sprite:moveTo(110, 120)
@@ -217,12 +219,59 @@ function ScenarioKombini:getTotalTimeProvided()
     return ScenarioKombini.super.getTotalTimeProvided(self)
 end
 
-function ScenarioKombini:runOutro()
+function ScenarioKombini:runOutro(dt)
     if not self.playerSprite.startedWalkingIn then
         self.playerSprite:change_current_image(1)
         self.partnerSprite:change_current_image(1)
-        self.playerSprite:startWalkIn(false, true)
-        self.partnerSprite:startWalkIn(true, false)
+        if self.emote_player ~= nil and self.emote_partner ~= nil then
+            if timer > 1.33 then
+                self.emote_player:moveTo(100, 120)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 100)
+                self.emote_partner:add()
+                timer = timer + dt
+            elseif timer > 0.99 then
+                self.emote_player:moveTo(100, 115)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 105)
+                self.emote_partner:add()
+                timer = timer + dt
+            elseif timer > 0.66 then
+                self.emote_player:moveTo(100, 110)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 100)
+                self.emote_partner:add()
+                timer = timer + dt
+            elseif timer > 0.33 then
+                self.emote_player:moveTo(100, 105)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 105)
+                self.emote_partner:add()
+                timer = timer + dt
+            elseif timer >= 0 then
+                self.emote_player:moveTo(100, 100)
+                self.emote_player:add()
+                self.emote_partner:moveTo(300, 100)
+                self.emote_partner:add()
+                timer = timer + dt
+            end
+
+            if timer > 1.5 then
+                self.playerSprite:startWalkIn(false, true)
+                self.partnerSprite:startWalkIn(true, false)
+                self.emote_partner:remove()
+                self.emote_player:remove()
+                timer = 0
+                return true
+            else
+                return false
+            end
+        else
+            self.playerSprite:startWalkIn(false, true)
+            self.partnerSprite:startWalkIn(true, false)
+            self.emote_partner:remove()
+            self.emote_player:remove()
+        end
     end
 
     if self.playerSprite.startedWalkingIn then
