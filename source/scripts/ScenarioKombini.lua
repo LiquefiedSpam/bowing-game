@@ -229,9 +229,9 @@ function ScenarioKombini:runOutro(dt)
             self.emote_partner:moveTo(300, 100)
             self.emote_partner:add()
             timer = timer + dt
-            if timer > 1 then
+            if timer > 1.5 then
                 self.playerSprite:startWalkIn(false, true)
-                self.partnerSprite:startWalkIn(true, false)
+                --self.partnerSprite:startWalkIn(true, false)
                 self.emote_partner:remove()
                 self.emote_player:remove()
                 timer = 0
@@ -240,10 +240,16 @@ function ScenarioKombini:runOutro(dt)
             end
         else
             self.playerSprite:startWalkIn(false, true)
-            self.partnerSprite:startWalkIn(true, false)
+            --self.partnerSprite:startWalkIn(true, false)
             self.emote_partner:remove()
             self.emote_player:remove()
+            timer = 0
         end
+    end
+
+    if timer < .5 then
+        timer = timer + dt
+        return false
     end
 
     if self.playerSprite.startedWalkingIn then
@@ -251,7 +257,12 @@ function ScenarioKombini:runOutro(dt)
         self.partnerSprite:updateWalkIn()
     end
 
+    if self.partnerSprite.startedWalkingIn then
+        self.partnerSprite:updateWalkIn()
+    end
+
     if self.playerSprite.hasWalkedIn then
+        print("yeah!!!")
         return true
     end
 
