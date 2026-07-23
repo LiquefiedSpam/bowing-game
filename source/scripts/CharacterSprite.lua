@@ -47,6 +47,7 @@ function CharacterSprite:updateWalkIn()
     if not self.walking then return end
     --this logic handles advancing the x value
     local dist = math.abs(self.walkTarget - self.playerSprite.x)
+    print(dist)
     if dist <= 1 then
         self.playerSprite:moveTo(self.walkTarget, self.playerSprite.y)
         self.walking = false
@@ -87,18 +88,18 @@ function CharacterSprite:startWalkIn(walkIn, isPlayer)
 
     if walkIn then
         if isPlayer then
-            self.playerSprite:moveTo(0, self.baseY) -- start off-screen, 0 is dummy approximate value
+            self.playerSprite:moveTo(80, self.baseY) -- start off-screen, 0 is dummy approximate value
             self.walkTarget = 230
             self.walkSpeed = 3
         else
-            --self.playerSprite:moveTo(600, self.baseY) -- start off-screen, 600 is dummy approximate value
             self.walkTarget = 600 -- dummy approximate value
             self.walkSpeed = 3
         end
     else
         if isPlayer then
-            --self.playerSprite:moveTo(0, self.baseY) -- start off-screen, 0 is dummy approximate value
-            self.walkTarget = 0
+            self.playerSprite:setImage(self.playerSprite.getImage(self.playerSprite), 1)
+            self.playerSprite:moveTo(-100, self.baseY)
+            self.walkTarget = -250
             self.walkSpeed = -3
         else
             self.playerSprite:moveTo(250, self.baseY) -- start off-screen, 600 is dummy approximate value
