@@ -28,14 +28,20 @@ local Actions = { --for now we can just make sure in the code to not select an a
     CHECKOUT_DOUBLE_BOW = 2
 }
 
+local bg = gfx.image.new("images/background/konbiniSmallBackground.png")
+local bg_sprite = gfx.sprite.new(bg)
+
+
 function ScenarioKombini:init(scenario_type)
+    bg_sprite:moveTo(110, 120)
+    bg_sprite:add()
     self.playerSprite = CharacterSprite(
         "images/player/playerSpriteSheet2-table-400-240",
         0)
     self.playerObj = Player(self.playerSprite, 130, 100, 3)
 
     self.partnerSprite = CharacterSprite(
-        "images/player/clerkSpriteSheet-table-400-240",
+        "images/player/clerkSpriteSheet4-table-400-240",
         0)
     self.partnerObj = Partner(self.partnerSprite, 500, 100, 3)
 
@@ -151,8 +157,8 @@ end
 -- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
 function ScenarioKombini:runIntro()
     if not self.playerSprite.startedWalkingIn then
-        self.playerSprite:startWalkIn(true, 80)
-        self.partnerSprite:startWalkIn(false, 100)
+        self.playerSprite:startWalkIn(true, true)
+        self.partnerSprite:startWalkIn(false, false)
     end
 
     if self.playerSprite.startedWalkingIn then

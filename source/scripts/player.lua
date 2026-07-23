@@ -39,14 +39,31 @@ function Player:setInitialCrankPos(crankPos)
         self.initial_crank_pos = crankPos
     end
     self.max_crank_num = crankPos + self.bow_range
+    if self.max_crank_num > 360 then
+        self.max_crank_num = self.max_crank_num - 360
+        self.crank_can_overflow = true
+    else
+        self.crank_can_overflow = false
+    end
 end
 
 -- Sets the current frame of the player sprite based on the position of the crank.
 -- param crankPosition (number): The position of the crank, which will be translated into a bow frame index (0-360)
 -- param currentTime (number): The current time in seconds since the start of the scenario
 function Player:setBowFrameIndex(crankPosition, currentTime)
-    if crankPosition >= self.initial_crank_pos and crankPosition <= self.max_crank_num then
+    if (self.crank_can_overflow ~= true and crankPosition >= self.initial_crank_pos and crankPosition <= self.max_crank_num) then
         self.current_frame = math.floor((crankPosition - self.initial_crank_pos) / self.bow_frame_length)
+    else
+        if self.crank_can_overflow then
+            if crankPosition <= 360 and crankPosition >= self.initial_crank_pos then
+                self.current_frame = math.floor((crankPosition - self.initial_crank_pos) / self.bow_frame_length)
+            else
+                if crankPosition >= 0 and crankPosition <= self.max_crank_num then
+                    self.current_frame = math.floor((crankPosition + 360 - self.initial_crank_pos) /
+                    self.bow_frame_length)
+                end
+            end
+        end
     end
     self.character_sprite:change_current_image(self.current_frame)
 
