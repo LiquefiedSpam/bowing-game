@@ -47,7 +47,7 @@ function CharacterSprite:updateWalkIn()
     if not self.walking then return end
     --this logic handles advancing the x value
     local dist = math.abs(self.walkTarget - self.playerSprite.x)
-    print(dist)
+    -- print(dist)
     if dist <= 1 then
         self.playerSprite:moveTo(self.walkTarget, self.playerSprite.y)
         self.walking = false
