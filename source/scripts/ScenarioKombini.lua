@@ -71,7 +71,7 @@ function ScenarioKombini:init(scenario_type)
             1,
             1,
             self.bow_intervals_for_player,
-            0.5
+            1
         )
     elseif scenario_type == Actions.CHECKOUT_DOUBLE_BOW then
         self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
@@ -87,7 +87,7 @@ function ScenarioKombini:init(scenario_type)
             1,
             1,
             self.bow_intervals_for_player,
-            0.5
+            1
         )
     else
         error("Invalid scenario type: " .. tostring(scenario_type))
@@ -113,11 +113,12 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT()
         local reset_position = 1
         local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
         table.insert(partner_bow_table, partner_bow)
-        table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 1 })
+        table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 0.5 })
         totalTime = bow_start_time + bow_duration + 0.5 -- 0.5 is a small extra time increment
 
         print("Partner Bow Table:")
         partner_bow:printBowDetails()
+        print("Bow Interval for Player: " .. tostring(bow_start_time + bow_duration + 0.5))
     end
     print("Generated partner bow table for CHECKOUT scenario with " .. num_bows .. " bows.")
     return partner_bow_table
@@ -136,9 +137,10 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
 
     local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
     table.insert(partner_bow_table, partner_bow)
-    table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 1 })
+    table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 0.5 })
 
     totalTime = bow_start_time + bow_duration + 0.5 -- 0.5 is a small extra time increment
+    print("Bow Interval for Player: " .. tostring(bow_start_time + bow_duration + 0.5))
 
     -- bow two
     local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
@@ -147,7 +149,8 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
     local reset_position = 1
     local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
     table.insert(partner_bow_table, partner_bow)
-    table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 1 })
+    table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 0.5 })
+    print("Bow Interval for Player: " .. tostring(bow_start_time + bow_duration + 0.5))
 
 
 
@@ -269,8 +272,12 @@ function ScenarioKombini:runOutro(dt)
         else
             self.playerSprite:startWalkIn(false, true)
             --self.partnerSprite:startWalkIn(true, false)
-            self.emote_partner:remove()
-            self.emote_player:remove()
+            if self.emote_partner ~= nil then
+                self.emote_partner:remove()
+            end
+            if self.emote_player ~= nil then
+                self.emote_player:remove()
+            end
             timer = 0
         end
     end
