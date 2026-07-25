@@ -88,7 +88,7 @@ function ScenarioManager:update()
 
     if self.currentState == ScenarioState.OUTRO then
         timer = 0
-        self:RunOutro(dt)
+        self:RunOutro()
     end
 
     if self.currentState == ScenarioState.BUILDSCENE then
