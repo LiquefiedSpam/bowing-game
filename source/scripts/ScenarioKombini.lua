@@ -71,7 +71,7 @@ function ScenarioKombini:init(scenario_type)
             1,
             1,
             self.bow_intervals_for_player,
-            0.5
+            1
         )
     elseif scenario_type == Actions.CHECKOUT_DOUBLE_BOW then
         self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
@@ -87,7 +87,7 @@ function ScenarioKombini:init(scenario_type)
             1,
             1,
             self.bow_intervals_for_player,
-            0.5
+            1
         )
     else
         error("Invalid scenario type: " .. tostring(scenario_type))
