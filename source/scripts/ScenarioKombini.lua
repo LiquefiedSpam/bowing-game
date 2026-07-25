@@ -48,9 +48,9 @@ function ScenarioKombini:init(scenario_type)
     self.partnerObj = Partner(self.partnerSprite, 500, 100, 3)
 
     self.cutscene = Cutscene(
-        "images/background/temp-box1.png",
+        "images/background/miniKonbini.png",
         "images/background/box2-table-114-114.png",
-        "images/background/temp-box3.png")
+        "images/background/miniLady.png")
 
 
     self.partner_bow_index = 1
@@ -176,8 +176,8 @@ function ScenarioKombini:runIntro()
     return false
 end
 
-function ScenarioKombini:runCutscene()
-    ScenarioKombini.super.runCutscene(self)
+function ScenarioKombini:runCutscene(dt)
+    return ScenarioKombini.super.runCutscene(self, dt)
 end
 
 -- Updates the player's bowing state based on the current crank position.

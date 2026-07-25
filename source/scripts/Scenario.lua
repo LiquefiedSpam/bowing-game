@@ -124,8 +124,8 @@ function Scenario:calculateScore(player_bow_table, player_intervals)
     return self.player_humility_score
 end
 
-function Scenario:runCutscene()
-    self.cutscene:draw()
+function Scenario:runCutscene(dt)
+    return self.cutscene:draw(dt)
 end
 
 function Scenario:getTotalTimeProvided()

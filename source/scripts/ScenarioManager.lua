@@ -70,8 +70,10 @@ function ScenarioManager:update()
             error("No scenario has been created. Cannot run cutscene sequence.")
         end
         playdate.graphics.clear()
-        self.currentScenario:runCutscene()
-        self.currentState = ScenarioState.INTRO
+        local fin = self.currentScenario:runCutscene(dt)
+        if fin == true then
+            self.currentState = ScenarioState.INTRO
+        end
     end
 
     if self.currentState == ScenarioState.INTRO then
@@ -88,7 +90,7 @@ function ScenarioManager:update()
 
     if self.currentState == ScenarioState.OUTRO then
         timer = 0
-        self:RunOutro(dt)
+        self:RunOutro()
     end
 
     if self.currentState == ScenarioState.BUILDSCENE then
