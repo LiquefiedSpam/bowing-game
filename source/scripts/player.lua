@@ -50,22 +50,70 @@ end
 -- Sets the current frame of the player sprite based on the position of the crank.
 -- param crankPosition (number): The position of the crank, which will be translated into a bow frame index (0-360)
 -- param currentTime (number): The current time in seconds since the start of the scenario
-function Player:setBowFrameIndex(crankPosition, currentTime)
-    if (self.crank_can_overflow ~= true and crankPosition >= self.initial_crank_pos and crankPosition <= self.max_crank_num) then
-        self.current_frame = math.floor((crankPosition - self.initial_crank_pos) / self.bow_frame_length)
-    else
-        if self.crank_can_overflow then
-            if crankPosition <= 360 and crankPosition >= self.initial_crank_pos then
-                self.current_frame = math.floor((crankPosition - self.initial_crank_pos) / self.bow_frame_length)
-            else
-                if crankPosition >= 0 and crankPosition <= self.max_crank_num then
-                    self.current_frame = math.floor((crankPosition + 360 - self.initial_crank_pos) /
-                    self.bow_frame_length)
-                end
-            end
-        end
+function Player:setBowFrameIndex(currentTime)
+    local change = pd.getCrankChange()
+    self.progress_in_current_frame = self.progress_in_current_frame + change
+    local framesToJump = math.floor(self.progress_in_current_frame / self.bow_frame_length)
+    self.progress_in_current_frame = self.progress_in_current_frame % self.bow_frame_length
+
+    self.current_frame = self.current_frame + framesToJump
+    if self.current_frame > self.max_bow_frames then
+        self.current_frame = self.max_bow_frames
+        self.progress_in_current_frame = self.bow_frame_length - 1
     end
+
+    if self.current_frame < 1 then
+        self.current_frame = 1
+        self.progress_in_current_frame = 0
+    end
+
     self.character_sprite:change_current_image(self.current_frame)
+
+
+
+
+    -- print(self.current_frame)
+    -- if self.current_frame == self.max_bow_frames then
+    --     if change > 0 then
+    --         if change >= 360 then
+    --             change = change % 360
+    --         end
+    --         print("booyah!")
+    --         -- local set_pos = crankPosition - self.max_crank_num
+    --         -- if set_pos < 0 then
+    --         --     set_pos = 360 + set_pos
+    --         -- end
+    --         self:setInitialCrankPos(self.initial_crank_pos + change)
+    --     end
+    -- end
+
+    -- if self.current_frame == 0 then
+    --     if change < 0 then
+    --         if change <= -360 then
+    --             change = change % 360
+    --         end
+    --         self:setInitialCrankPos(crankPosition)
+    --     end
+    -- end
+
+
+    -- if (self.crank_can_overflow ~= true and crankPosition >= self.initial_crank_pos and crankPosition <= self.max_crank_num) then
+    --     self.current_frame = math.floor((crankPosition - self.initial_crank_pos) / self.bow_frame_length)
+    -- else
+    --     if self.crank_can_overflow then
+    --         if crankPosition <= 360 and crankPosition >= self.initial_crank_pos then
+    --             self.current_frame = math.floor((crankPosition - self.initial_crank_pos) / self.bow_frame_length)
+    --         else
+    --             if crankPosition >= 0 and crankPosition <= self.max_crank_num then
+    --                 self.current_frame = math.floor((crankPosition + 360 - self.initial_crank_pos) /
+    --                     self.bow_frame_length)
+    --             end
+    --         end
+    --     end
+    -- end
+
+    -- self.current_frame = math.max(0, self.current_frame)
+    --self.character_sprite:change_current_image(self.current_frame)
 
     local bowFrameIndex = self.current_frame
     -- print("Bows: " .. self.current_bow_num .. " | Current Bow Frame Index: " ..

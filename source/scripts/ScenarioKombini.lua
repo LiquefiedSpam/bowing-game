@@ -10,18 +10,6 @@ class("ScenarioKombini").extends(Scenario)
 local pd = playdate
 local gfx = pd.graphics
 
--- -- Player
--- local playerSprite = CharacterSprite(
---     "images/player/playerSpriteSheet-table-400-240",
---     0)
--- local playerObj = Player(playerSprite, 130, 100, 3)
-
--- -- Partner
--- local partnerSprite = CharacterSprite(
---     "images/player/clerkSpriteSheet3-table-400-240",
---     0)
--- local partnerObj = Partner(partnerSprite, 500, 100, 3)
-
 local Actions = { --for now we can just make sure in the code to not select an action
     --that doesn't work with the current location I guess
     CHECKOUT = 1,
@@ -49,7 +37,7 @@ function ScenarioKombini:init(scenario_type)
 
     self.cutscene = Cutscene(
         "images/background/miniKonbini.png",
-        "images/background/box2-table-114-114.png",
+        "images/background/moneyTransfer-table-114-114.png",
         "images/background/miniLady.png")
 
 
@@ -173,6 +161,7 @@ function ScenarioKombini:runIntro()
 
     if self.playerSprite.hasWalkedIn then
         self.playerObj:setInitialCrankPos(pd.getCrankPosition())
+        self.playerSprite.hasWalkedIn = false
         return true
     end
 
@@ -186,7 +175,7 @@ end
 -- Updates the player's bowing state based on the current crank position.
 -- Returns playerObj for debugging purpose in scenarioManager.lua
 function ScenarioKombini:updatePlayerBowing(currentTime)
-    self.playerObj:setBowFrameIndex(pd.getCrankPosition(), currentTime)
+    self.playerObj:setBowFrameIndex(currentTime)
     return self.playerObj
 end
 
@@ -265,7 +254,7 @@ function ScenarioKombini:runOutro(dt)
                 self.emote_partner:remove()
                 self.emote_player:remove()
                 timer = 0
-                return true
+                --return true
             else
                 return false
             end
@@ -297,7 +286,6 @@ function ScenarioKombini:runOutro(dt)
     end
 
     if self.playerSprite.hasWalkedIn then
-        print("yeah!!!")
         return true
     end
 
