@@ -16,7 +16,7 @@ local Actions = { --for now we can just make sure in the code to not select an a
     CHECKOUT_DOUBLE_BOW = 2
 }
 
-local bg = gfx.image.new("images/background/konbiniSmallBackground2.png")
+local bg = gfx.image.new("images/background/konbiniSmallBackground.png")
 local bg_sprite = gfx.sprite.new(bg)
 
 local timer = 0
