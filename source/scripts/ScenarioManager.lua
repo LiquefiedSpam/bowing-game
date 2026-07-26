@@ -32,6 +32,7 @@ local gfx = pd.graphics
 -- Main Menu
 local mainMenu = gfx.image.new("images/UI_screens/MainMenu.png")
 
+
 local timer = 0
 local totalTimer = 0
 
@@ -46,6 +47,10 @@ function ScenarioManager:init()
     self.playerObj = nil
     self.partnerObj = nil
     self.totalTimeGivenSec = 60
+
+
+    -- Heart Screen
+    self.heartScreen = HeartScreen()
 end
 
 function ScenarioManager:update()
@@ -58,11 +63,10 @@ function ScenarioManager:update()
     if self.currentState == ScenarioState.INTERVAL then
         mainMenu:draw(0, 0)
         if pd.buttonJustPressed(pd.kButtonA) then
+            self.heartScreen:resetHearts()
             self.currentState = ScenarioState.CUTSCENE
             self:ConstructScenario()
         end
-        --playdate.wait(1000)
-        --self.currentState = ScenarioState.INTRO
     end
 
     if self.currentState == ScenarioState.CUTSCENE then
@@ -96,6 +100,8 @@ function ScenarioManager:update()
     if self.currentState == ScenarioState.BUILDSCENE then
         self:BuildScene()
     end
+
+    self.heartScreen:drawHearts()
 end
 
 -- Creates a new scenario based on the current location and action. Initializes the scenario and sets it as the current scenario.
@@ -205,6 +211,7 @@ function ScenarioManager:RunScoring()
         self.currentScenario.emote_player = pd.graphics.sprite.new(player_low_image)
         local partner_low_image = pd.graphics.image.new("images/emotes/question_mark.png")
         self.currentScenario.emote_partner = pd.graphics.sprite.new(partner_low_image)
+        self.heartScreen:loseLife()
     elseif score_status == "MEDIUM" then
         local player_medium_image = pd.graphics.image.new("images/emotes/blank.png")
         self.currentScenario.emote_player = pd.graphics.sprite.new(player_medium_image)
@@ -235,11 +242,11 @@ function ScenarioManager:RunOutro()
 end
 
 function ScenarioManager:BuildScene()
-    if self.totalTimeGivenSec >= totalTimer then
+    if self.heartScreen:getHearts() > 0 then
         self.currentScenario:destruct()
         self:ConstructScenario()
         self.currentState = ScenarioState.CUTSCENE
-    elseif self.totalTimeGivenSec < totalTimer then
+    else
         self.currentState = ScenarioState.INTERVAL
         self.currentAction = nil
     end

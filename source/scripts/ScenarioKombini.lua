@@ -109,7 +109,7 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT()
     for i = 1, num_bows do
         local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
         local bow_duration = 0.5 + math.random(-2, 2) / 6
-        local deepness = 8 + math.random(-2, 2)
+        local deepness = 6 + math.random(-2, 2)
         local reset_position = 1
         local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
         table.insert(partner_bow_table, partner_bow)
@@ -132,7 +132,7 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
     -- bow one
     local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
     local bow_duration = 0.5 + math.random(-2, 2) / 6
-    local deepness = 8 + math.random(-2, 2)
+    local deepness = 6 + math.random(-2, 2)
     local reset_position = 1
 
     local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
@@ -145,7 +145,7 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
     -- bow two
     local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
     local bow_duration = 0.5 + math.random(-2, 2) / 6
-    local deepness = 8 + math.random(-2, 2)
+    local deepness = 6 + math.random(-2, 2)
     local reset_position = 1
     local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
     table.insert(partner_bow_table, partner_bow)
