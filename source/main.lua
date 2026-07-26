@@ -4,6 +4,7 @@ import "scripts/CharacterSprite"
 import "scripts/Player"
 import "scripts/Partner"
 import "scripts/ScenarioManager"
+import "scripts/HeartScreen"
 
 local pd = playdate
 local gfx = pd.graphics
