@@ -36,6 +36,8 @@ function Cutscene:animation_sequence(dt)
     end
     box_sfx:play()
 
+
+
     if timer >= 1.45 and timer < 1.55 then
         self.image_two_path:getImage(1):draw(145, 64)
     end
