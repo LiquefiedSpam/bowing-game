@@ -173,6 +173,7 @@ function ScenarioKombini:runIntro()
 
     if self.playerSprite.hasWalkedIn then
         self.playerObj:setInitialCrankPos(pd.getCrankPosition())
+        self.playerSprite.hasWalkedIn = false
         return true
     end
 
@@ -265,7 +266,7 @@ function ScenarioKombini:runOutro(dt)
                 self.emote_partner:remove()
                 self.emote_player:remove()
                 timer = 0
-                return true
+                --return true
             else
                 return false
             end
@@ -305,6 +306,7 @@ function ScenarioKombini:runOutro(dt)
 end
 
 function ScenarioKombini:destruct()
+    print("hellooooooo")
     self.playerSprite:removeSprite()
     self.partnerSprite:removeSprite()
 end

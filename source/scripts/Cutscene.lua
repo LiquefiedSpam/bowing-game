@@ -36,27 +36,27 @@ function Cutscene:animation_sequence(dt)
     end
     box_sfx:play()
 
-    if timer >= 1.3 and timer < 1.4 then
+    if timer >= 1.45 and timer < 1.55 then
         self.image_two_path:getImage(1):draw(145, 64)
     end
 
-    if timer >= 1.4 and timer < 1.5 then
+    if timer >= 1.55 and timer < 1.65 then
         self.image_two_path:getImage(2):draw(145, 64)
     end
 
-    if timer >= 1.5 and timer < 1.6 then
+    if timer >= 1.65 and timer < 1.75 then
         self.image_two_path:getImage(3):draw(145, 64)
     end
 
-    if timer >= 1.6 then
+    if timer >= 1.75 then
         self.image_two_path:getImage(4):draw(145, 64)
     end
 
-    if timer >= 2.35 then
+    if timer >= 2.50 then
         self.image_three_path:draw(273, 64)
     end
 
-    if timer >= 3.1 then
+    if timer >= 3.25 then
         self.animation_complete = true
     end
 end

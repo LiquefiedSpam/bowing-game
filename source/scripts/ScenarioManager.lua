@@ -161,10 +161,10 @@ function ScenarioManager:RunGameplay()
         self.currentState = ScenarioState.SCORING
     end
 
-    gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
-    gfx.drawTextAligned("Bows: " .. self.playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
-    gfx.drawTextAligned("Lowest Bow Frame: " .. self.playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
-    gfx.drawTextAligned("Bow Timer: " .. self.playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
+    -- gfx.drawTextAligned("Score: " .. score, 390, 1, kTextAlignment.right)
+    -- gfx.drawTextAligned("Bows: " .. self.playerObj:getCurrentBowNum(), 240, 20, kTextAlignment.right)
+    -- gfx.drawTextAligned("Lowest Bow Frame: " .. self.playerObj:getCurrentLowestBowFrame(), 240, 40, kTextAlignment.right)
+    -- gfx.drawTextAligned("Bow Timer: " .. self.playerObj:getBowTimer(), 240, 60, kTextAlignment.right)
 end
 
 function ScenarioManager:RunScoring()
