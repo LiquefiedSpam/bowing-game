@@ -5,7 +5,7 @@ local gfx = playdate.graphics
 
 -- player has 5 lives. If they get a medium or low score, they lose a life.
 function HeartScreen:init()
-    self.maxHearts = 5
+    self.maxHearts = 3
     self.currentHearts = self.maxHearts
     self.heartSpacing = 5
     self.heartWidth = 35

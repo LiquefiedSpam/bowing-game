@@ -16,14 +16,14 @@ local Actions = { --for now we can just make sure in the code to not select an a
     CHECKOUT_DOUBLE_BOW = 2
 }
 
-local bg = gfx.image.new("images/background/konbiniSmallBackground.png")
+local bg = gfx.image.new("images/background/konbiniBackground2.png")
 local bg_sprite = gfx.sprite.new(bg)
 
 local timer = 0
 
 
 function ScenarioKombini:init(scenario_type)
-    bg_sprite:moveTo(100, 120)
+    bg_sprite:moveTo(200, 120)
     bg_sprite:add()
     self.playerSprite = CharacterSprite(
         "images/player/playerSpriteSheet2-table-400-240",

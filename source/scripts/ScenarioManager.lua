@@ -1,4 +1,6 @@
 import "scripts/ScenarioKombini"
+import "scripts/HeartScreen"
+import "scripts/ScoreScreen"
 
 class("ScenarioManager").extends()
 
@@ -51,6 +53,9 @@ function ScenarioManager:init()
 
     -- Heart Screen
     self.heartScreen = HeartScreen()
+
+    --Score Screen
+    self.scoreScreen = ScoreScreen()
 end
 
 function ScenarioManager:update()
@@ -64,6 +69,7 @@ function ScenarioManager:update()
         mainMenu:draw(0, 0)
         if pd.buttonJustPressed(pd.kButtonA) then
             self.heartScreen:resetHearts()
+            self.scoreScreen:resetScore()
             self.currentState = ScenarioState.CUTSCENE
             self:ConstructScenario()
         end
@@ -102,6 +108,7 @@ function ScenarioManager:update()
     end
 
     self.heartScreen:drawHearts()
+    self.scoreScreen:drawScore()
 end
 
 -- Creates a new scenario based on the current location and action. Initializes the scenario and sets it as the current scenario.
@@ -215,13 +222,15 @@ function ScenarioManager:RunScoring()
     elseif score_status == "MEDIUM" then
         local player_medium_image = pd.graphics.image.new("images/emotes/blank.png")
         self.currentScenario.emote_player = pd.graphics.sprite.new(player_medium_image)
-        local partner_medium_image = pd.graphics.image.new("images/emotes/smiley.png")
+        local partner_medium_image = pd.graphics.image.new("images/emotes/thumbs_up.png")
         self.currentScenario.emote_partner = pd.graphics.sprite.new(partner_medium_image)
+        self.scoreScreen:addScore(1)
     elseif score_status == "HIGH" then
         local player_high_image = pd.graphics.image.new("images/emotes/blank.png")
         self.currentScenario.emote_player = pd.graphics.sprite.new(player_high_image)
-        local partner_high_image = pd.graphics.image.new("images/emotes/thumbs_up.png")
+        local partner_high_image = pd.graphics.image.new("images/emotes/smiley.png")
         self.currentScenario.emote_partner = pd.graphics.sprite.new(partner_high_image)
+        self.scoreScreen:addScore(2)
     end
 
     if scoring_result then
@@ -242,8 +251,8 @@ function ScenarioManager:RunOutro()
 end
 
 function ScenarioManager:BuildScene()
+    self.currentScenario:destruct()
     if self.heartScreen:getHearts() > 0 then
-        self.currentScenario:destruct()
         self:ConstructScenario()
         self.currentState = ScenarioState.CUTSCENE
     else
