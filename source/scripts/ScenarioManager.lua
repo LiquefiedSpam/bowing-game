@@ -32,7 +32,7 @@ local pd = playdate
 local gfx = pd.graphics
 
 -- Main Menu
-local mainMenu = gfx.image.new("images/UI_screens/MainMenu.png")
+local mainMenu = gfx.image.new("images/UI_screens/BowMainMenu.png")
 
 local timer = 0
 local totalTimer = 0
@@ -48,6 +48,7 @@ function ScenarioManager:init()
     self.playerObj = nil
     self.partnerObj = nil
     self.totalTimeGivenSec = 60
+    self.backgroundPlayer = BackgroundMusic()
 
 
     -- Heart Screen
@@ -80,6 +81,9 @@ function ScenarioManager:update()
         end
         playdate.graphics.clear()
         local fin = self.currentScenario:runCutscene(dt)
+        self.heartScreen:drawHearts()
+        self.scoreScreen:drawScore()
+
         if fin == true then
             self.currentState = ScenarioState.INTRO
         end
@@ -87,27 +91,34 @@ function ScenarioManager:update()
 
     if self.currentState == ScenarioState.INTRO then
         self:RunIntro()
+        self.heartScreen:drawHearts()
+        self.scoreScreen:drawScore()
     end
 
     if self.currentState == ScenarioState.GAMEPLAY then
         self:RunGameplay()
+        self.heartScreen:drawHearts()
+        self.scoreScreen:drawScore()
     end
 
     if self.currentState == ScenarioState.SCORING then
         self:RunScoring()
+        self.heartScreen:drawHearts()
+        self.scoreScreen:drawScore()
     end
 
     if self.currentState == ScenarioState.OUTRO then
         timer = 0
         self:RunOutro()
+        self.heartScreen:drawHearts()
+        self.scoreScreen:drawScore()
     end
 
     if self.currentState == ScenarioState.BUILDSCENE then
         self:BuildScene()
     end
 
-    self.heartScreen:drawHearts()
-    self.scoreScreen:drawScore()
+    self.backgroundPlayer:update()
 end
 
 -- Creates a new scenario based on the current location and action. Initializes the scenario and sets it as the current scenario.
