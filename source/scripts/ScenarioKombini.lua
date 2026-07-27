@@ -23,7 +23,7 @@ local timer = 0
 
 
 function ScenarioKombini:init(scenario_type)
-    bg_sprite:moveTo(110, 120)
+    bg_sprite:moveTo(100, 120)
     bg_sprite:add()
     self.playerSprite = CharacterSprite(
         "images/player/playerSpriteSheet2-table-400-240",
