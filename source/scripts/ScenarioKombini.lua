@@ -13,7 +13,8 @@ local gfx = pd.graphics
 local Actions = { --for now we can just make sure in the code to not select an action
     --that doesn't work with the current location I guess
     CHECKOUT = 1,
-    CHECKOUT_DOUBLE_BOW = 2
+    CHECKOUT_DOUBLE_BOW = 2,
+    --CHECKOUT_MONEY_FELL = 3
 }
 
 local bg = gfx.image.new("images/background/konbiniBackground2.png")
@@ -35,10 +36,17 @@ function ScenarioKombini:init(scenario_type)
         0)
     self.partnerObj = Partner(self.partnerSprite, 500, 100, 3)
 
+    --if scenario_type ~= Actions.CHECKOUT_MONEY_FELL then
     self.cutscene = Cutscene(
         "images/background/miniKonbini.png",
-        "images/background/moneyTransfer-table-114-114.png",
-        "images/background/miniLady.png")
+        "images/background/moneyTransferFall-table-114-114.png",
+        "images/background/shockedLady.png")
+    -- else
+    --     self.cutscene = Cutscene(
+    --         "images/background/miniKonbini.png",
+    --         "images/background/moneyTransferFall-table-114-114.png",
+    --         "images/background/miniLadyShocked.png")
+    -- end
 
 
     self.partner_bow_index = 1
@@ -51,12 +59,12 @@ function ScenarioKombini:init(scenario_type)
             self,
             "Checkout",
             self.cutscene,
-            15,
-            18,
-            3,
+            10,
+            20,
+            5,
             1,
             2,
-            -1,
+            1,
             1,
             self.bow_intervals_for_player,
             1
@@ -67,12 +75,12 @@ function ScenarioKombini:init(scenario_type)
             self,
             "Checkout Double Bow",
             self.cutscene,
-            15,
-            18,
-            4,
+            10,
+            20,
+            5,
             1,
             2,
-            -1,
+            1,
             1,
             self.bow_intervals_for_player,
             1
