@@ -34,7 +34,6 @@ local gfx = pd.graphics
 -- Main Menu
 local mainMenu = gfx.image.new("images/UI_screens/MainMenu.png")
 
-
 local timer = 0
 local totalTimer = 0
 

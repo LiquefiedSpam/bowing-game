@@ -34,12 +34,14 @@ function Cutscene:animation_sequence(dt)
     if timer >= .75 then
         self.image_one_path:draw(17, 64)
     end
-    box_sfx:play()
 
-
+    if timer >= .75 and timer < .85 then
+        box_sfx:play()
+    end
 
     if timer >= 1.45 and timer < 1.55 then
         self.image_two_path:getImage(1):draw(145, 64)
+        box_sfx:play()
     end
 
     if timer >= 1.55 and timer < 1.65 then
@@ -54,8 +56,12 @@ function Cutscene:animation_sequence(dt)
         self.image_two_path:getImage(4):draw(145, 64)
     end
 
-    if timer >= 2.50 then
+    if timer >= 2.25 then
         self.image_three_path:draw(273, 64)
+    end
+
+    if timer >= 2.25 and timer <= 2.35 then
+        box_sfx:play()
     end
 
     if timer >= 3.25 then
