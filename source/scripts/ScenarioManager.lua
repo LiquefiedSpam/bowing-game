@@ -11,7 +11,7 @@ local LocationScenarios = {
 
 -- number of actions per location (keys have to be the same name as the location keys in LocationScenarios)
 local Actions = {
-    KONBINI = 2,
+    KONBINI = 3,
 }
 
 local ScenarioState = {
@@ -145,7 +145,7 @@ function ScenarioManager:RunIntro()
         error("No scenario has been created. Cannot run intro sequence.")
     end
 
-    local intro_result = self.currentScenario:runIntro()
+    local intro_result = self.currentScenario:runIntro(dt)
     if intro_result then
         self.currentState = ScenarioState.GAMEPLAY
     end

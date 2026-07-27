@@ -14,7 +14,7 @@ local Actions = { --for now we can just make sure in the code to not select an a
     --that doesn't work with the current location I guess
     CHECKOUT = 1,
     CHECKOUT_DOUBLE_BOW = 2,
-    --CHECKOUT_MONEY_FELL = 3
+    CHECKOUT_MONEY_FELL = 3
 }
 
 local bg = gfx.image.new("images/background/konbiniBackground2.png")
@@ -24,29 +24,40 @@ local timer = 0
 
 
 function ScenarioKombini:init(scenario_type)
-    bg_sprite:moveTo(200, 120)
+    bg_sprite:moveTo(200, 400)
     bg_sprite:add()
     self.playerSprite = CharacterSprite(
         "images/player/playerSpriteSheet2-table-400-240",
         0)
-    self.playerObj = Player(self.playerSprite, 130, 100, 3)
+    self.playerObj = Player(self.playerSprite, 80, 100, 3)
 
     self.partnerSprite = CharacterSprite(
         "images/player/clerkSpriteSheet4-table-400-240",
         0)
     self.partnerObj = Partner(self.partnerSprite, 500, 100, 3)
 
-    --if scenario_type ~= Actions.CHECKOUT_MONEY_FELL then
-    self.cutscene = Cutscene(
-        "images/background/miniKonbini.png",
-        "images/background/moneyTransferFall-table-114-114.png",
-        "images/background/shockedLady.png")
-    -- else
-    --     self.cutscene = Cutscene(
-    --         "images/background/miniKonbini.png",
-    --         "images/background/moneyTransferFall-table-114-114.png",
-    --         "images/background/miniLadyShocked.png")
-    -- end
+    self.bg_move_timer = 0
+    self.bg_move_duration = 3
+
+    self.bg_current_y = 400
+    self.bg_target_y = 120
+    self.bg_target_y_out = -300
+
+    self.bg_moved_in = false
+
+    self.emotes_done = false
+
+    if scenario_type ~= Actions.CHECKOUT_MONEY_FELL then
+        self.cutscene = Cutscene(
+            "images/background/miniKonbini.png",
+            "images/background/moneyTransfer-table-114-114.png",
+            "images/background/miniLady.png")
+    else
+        self.cutscene = Cutscene(
+            "images/background/miniKonbini.png",
+            "images/background/moneyTransferFall-table-114-114.png",
+            "images/background/shockedLady.png")
+    end
 
 
     self.partner_bow_index = 1
@@ -59,12 +70,12 @@ function ScenarioKombini:init(scenario_type)
             self,
             "Checkout",
             self.cutscene,
-            10,
-            20,
-            5,
+            15,
+            18,
+            3,
             1,
             2,
-            1,
+            -1,
             1,
             self.bow_intervals_for_player,
             1
@@ -75,12 +86,28 @@ function ScenarioKombini:init(scenario_type)
             self,
             "Checkout Double Bow",
             self.cutscene,
-            10,
-            20,
-            5,
+            15,
+            18,
+            4,
             1,
             2,
+            -1,
             1,
+            self.bow_intervals_for_player,
+            1
+        )
+    elseif scenario_type == Actions.CHECKOUT_MONEY_FELL then
+        self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT()
+        ScenarioKombini.super.init(
+            self,
+            "Checkout Money Fell",
+            self.cutscene,
+            30,
+            27,
+            4,
+            4,
+            3,
+            2,
             1,
             self.bow_intervals_for_player,
             1
@@ -154,26 +181,75 @@ function ScenarioKombini:generatePartnerBowTable_CHECKOUT_DOUBLE_BOW()
     return partner_bow_table
 end
 
+-- function ScenarioKombini:generatePartnerBowTable_CHECKOUT_MONEY_FALL()
+--     local num_bows = 1
+--     local totalTime = 0
+--     local partner_bow_table = {}
+--     for i = 1, num_bows do
+--         local bow_start_time = totalTime + math.random(0, 1) / 2 + 1
+--         local bow_duration = 0.5 + math.random(-2, 2) / 6
+--         local deepness = 6 + math.random(-2, 2)
+--         local reset_position = 1
+--         local partner_bow = PartnerBow(bow_start_time, bow_duration, deepness, reset_position)
+--         table.insert(partner_bow_table, partner_bow)
+--         table.insert(self.bow_intervals_for_player, { bow_start_time + bow_duration + 0.5 })
+--         totalTime = bow_start_time + bow_duration + 0.5 -- 0.5 is a small extra time increment
+
+--         print("Partner Bow Table:")
+--         partner_bow:printBowDetails()
+--         print("Bow Interval for Player: " .. tostring(bow_start_time + bow_duration + 0.5))
+--     end
+--     print("Generated partner bow table for CHECKOUT scenario with " .. num_bows .. " bows.")
+--     return partner_bow_table
+-- end
+
 -- Runs the intro sequence for the Kombini scenario, which includes the player and partner walking into the scene.
 -- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
-function ScenarioKombini:runIntro()
-    if not self.playerSprite.startedWalkingIn then
-        self.playerSprite:startWalkIn(true, true)
-        self.partnerSprite:startWalkIn(false, false)
-    end
+function ScenarioKombini:runIntro(dt)
+    self:slide_bg(true, dt)
 
-    if self.playerSprite.startedWalkingIn then
-        self.playerSprite:updateWalkIn()
-        self.partnerSprite:updateWalkIn()
-    end
+    if self.bg_move_timer > self.bg_move_duration / 2 then
+        if not self.playerSprite.startedWalkingIn then
+            self.playerSprite:startWalkIn(true, true)
+            self.partnerSprite:startWalkIn(false, false)
+        end
 
-    if self.playerSprite.hasWalkedIn then
-        self.playerObj:setInitialCrankPos(pd.getCrankPosition())
-        self.playerSprite.hasWalkedIn = false
-        return true
+        if self.playerSprite.startedWalkingIn then
+            self.playerSprite:updateWalkIn()
+            self.partnerSprite:updateWalkIn()
+        end
+
+        if self.playerSprite.hasWalkedIn and self.bg_moved_in then
+            self.bg_moved_in = false
+            self.playerObj:setInitialCrankPos(pd.getCrankPosition())
+            self.playerSprite.hasWalkedIn = false
+            self.bg_move_timer = 0
+            return true
+        end
     end
 
     return false
+end
+
+function ScenarioKombini:slide_bg(slide_in, dt)
+    if self.bg_moved_in then
+        return
+    end
+    if self.bg_move_timer < self.bg_move_duration then
+        self.bg_move_timer = self.bg_move_timer + dt
+        local t = self.bg_move_timer / self.bg_move_duration
+
+        if slide_in then
+            self.bg_current_y = 400 + (self.bg_target_y - 400) * (1 - (1 - t) ^ 2)
+        else
+            self.bg_current_y = self.bg_target_y + (self.bg_target_y_out - self.bg_target_y) * t ^ 3
+        end
+
+        bg_sprite:moveTo(200, self.bg_current_y)
+    else
+        print("got herererere")
+        self.bg_moved_in = true
+    end
 end
 
 function ScenarioKombini:runCutscene(dt)
@@ -220,7 +296,7 @@ function ScenarioKombini:getTotalTimeProvided()
 end
 
 function ScenarioKombini:runOutro(dt)
-    if not self.playerSprite.startedWalkingIn then
+    if not self.playerSprite.startedWalkingIn and self.emotes_done == false then
         self.playerSprite:change_current_image(1)
         self.partnerSprite:change_current_image(1)
         if self.emote_player ~= nil and self.emote_partner ~= nil then
@@ -258,7 +334,7 @@ function ScenarioKombini:runOutro(dt)
 
             if timer > 1.5 then
                 self.playerSprite:startWalkIn(false, true)
-                --self.partnerSprite:startWalkIn(true, false)
+                self.partnerSprite:startWalkIn(true, false)
                 self.emote_partner:remove()
                 self.emote_player:remove()
                 timer = 0
@@ -268,7 +344,7 @@ function ScenarioKombini:runOutro(dt)
             end
         else
             self.playerSprite:startWalkIn(false, true)
-            --self.partnerSprite:startWalkIn(true, false)
+            self.partnerSprite:startWalkIn(true, false)
             if self.emote_partner ~= nil then
                 self.emote_partner:remove()
             end
@@ -279,21 +355,31 @@ function ScenarioKombini:runOutro(dt)
         end
     end
 
+    self:slide_bg(false, dt)
     if timer < .5 then
         timer = timer + dt
         return false
     end
 
     if self.playerSprite.startedWalkingIn then
+        self.emotes_done = true
         self.playerSprite:updateWalkIn()
-        self.partnerSprite:updateWalkIn()
     end
 
     if self.partnerSprite.startedWalkingIn then
         self.partnerSprite:updateWalkIn()
     end
 
-    if self.playerSprite.hasWalkedIn then
+    -- if self.playerSprite.hasWalkedIn then
+    --     self.playerSprite.startedWalkingIn = false
+    -- end
+
+    -- if self.partnerSprite.hasWalkedIn then
+    --     self.partnerSprite.startedWalkingIn = false
+    -- end
+
+    if self.playerSprite.hasWalkedIn and self.bg_moved_in then
+        self.bg_moved_in = false
         return true
     end
 
