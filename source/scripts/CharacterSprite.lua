@@ -5,6 +5,7 @@ import "CoreLibs/graphics"
 class('CharacterSprite').extends(Object)
 local pd = playdate
 local gfx = pd.graphics
+local walking_sfx = playdate.sound.fileplayer.new("sounds/pop-walk.mp3")
 
 -- Requires: bottom_sprite (string), sprite_sheet (string)
 function CharacterSprite:init(sprite_sheet)
@@ -70,6 +71,11 @@ function CharacterSprite:updateWalkIn()
 
     --clamp offset
     --bounceOffset = math.abs(bounceOffset)
+
+    -- if touching the ground, play a sound effect
+    if bounceOffset <= 0.5 then
+        walking_sfx:play()
+    end
 
     self.playerSprite:moveTo(newX, self.baseY + bounceOffset)
 end
