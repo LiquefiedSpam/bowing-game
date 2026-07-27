@@ -40,7 +40,7 @@ function ScenarioKombini:init(scenario_type)
     self.cutscene = Cutscene(
         "images/background/miniKonbini.png",
         "images/background/moneyTransferFall-table-114-114.png",
-        "images/background/miniLadyShocked.png")
+        "images/background/shockedLady.png")
     -- else
     --     self.cutscene = Cutscene(
     --         "images/background/miniKonbini.png",
@@ -59,12 +59,12 @@ function ScenarioKombini:init(scenario_type)
             self,
             "Checkout",
             self.cutscene,
-            15,
-            18,
-            3,
+            10,
+            20,
+            5,
             1,
             2,
-            -1,
+            1,
             1,
             self.bow_intervals_for_player,
             1
@@ -75,12 +75,12 @@ function ScenarioKombini:init(scenario_type)
             self,
             "Checkout Double Bow",
             self.cutscene,
-            15,
-            18,
-            4,
+            10,
+            20,
+            5,
             1,
             2,
-            -1,
+            1,
             1,
             self.bow_intervals_for_player,
             1
