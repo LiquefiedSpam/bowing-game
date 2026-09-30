@@ -1,4 +1,5 @@
 -- PlayerBow class that holds data for a single bow, including the starting frame, current bow number, lowest bow frame, and timer.
+-- could probably be abstracted w partner's bows too
 class('PlayerBow').extends()
 
 -- current_bow_frame is the starting frame of the bow

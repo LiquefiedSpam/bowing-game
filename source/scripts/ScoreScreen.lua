@@ -27,6 +27,7 @@ function ScoreScreen:resetScore()
     self.score = 0
 end
 
+--heart screen?
 function HeartScreen:getScore()
     return self.score
 end

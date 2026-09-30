@@ -7,8 +7,8 @@ class("Scenario").extends()
 -- player_bowing_intervals is a table of decimal values that represents the required times for the player to bow within the scenario
 -- player_bowing_intervals_forgiveness is a decimal value that represents the forgiveness range for the player to bow within the scenario
 function Scenario:init(
-    name,
-    cutscene,
+    name,     --name of the scenario
+    cutscene, --the cutscene to play before the gameplay starts
     humility_low_range_score,
     humility_high_range_score,
     humility_forgiveness,
@@ -30,18 +30,19 @@ function Scenario:init(
     self.time_bows_humility = time_bows_humility
     self.size_bow_humility = size_bow_humility
 
-    self.player_bowing_intervals = player_bowing_intervals
+    self.player_bowing_intervals =
+    player_bowing_intervals                                --we should probably rename this to like 'ideal player bowing intervals'
     self.player_bowing_intervals_forgiveness = player_bowing_intervals_forgiveness
-    self.calculatedScore = false
-    self.total_time_provided = 6
+    self.calculatedScore = false                           --have not calculated score yet
+    self.total_time_provided = 6                           --length of cutscene
 
-    self.current_player_bow_position = 1
-    self.current_partner_bow_position = 1
-    self.bow_afk_timer = 0
-    self.bow_afk_timer_max = 2
+    self.current_player_bow_position = 1                   --what's this?
+    self.current_partner_bow_position = 1                  --what's this?
+    self.bow_afk_timer = 0                                 --what's this?
+    self.bow_afk_timer_max = 2                             --what's this?
 
-    self.emote_player = nil
-    self.emote_partner = nil
+    self.emote_player = nil                                --player emote to show at end of scenario
+    self.emote_partner = nil                               --partner emote to show at end of scenario
 end
 
 -- returns a string result representing the score of the scenario based on the player's performance and the conditions of the scenario
@@ -120,10 +121,12 @@ function Scenario:calculateScore(player_bow_table, player_intervals)
 
     self.player_humility_score = num_of_bows * self.many_bows_humility + deepest_bow_frame * self.deep_bows_humility +
         longest_bow_frame * self.time_bows_humility + ave_bow_size * self.size_bow_humility
+    --definitely just kind of an arbitrary number that is hard to have a reference point to
     self.calculatedScore = true
     return self.player_humility_score
 end
 
+--start the supplied cutscene
 function Scenario:runCutscene(dt)
     return self.cutscene:draw(dt)
 end
@@ -134,6 +137,9 @@ end
 
 -- Checks whether movement has been detected for more than a set duration. If not, end the scene prematurely.
 -- Returns a boolean that indicates whether movement has been detected (true) or not (false).
+-- this should definitely be overhauled to be more nuanced later, because the player could  be waiting for the partner
+--to do something, etc
+--also rename the passed in variables bc current_player_position sounds like their x/y position
 function Scenario:checkPlayerMovement(current_player_position, current_partner_position, delta_time)
     if self.bow_afk_timer >= self.bow_afk_timer_max then
         print("No movement has been detected for " .. self.bow_afk_timer_max .. " seconds. Ending scene.")

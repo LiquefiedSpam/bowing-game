@@ -17,12 +17,17 @@ local Actions = { --for now we can just make sure in the code to not select an a
     CHECKOUT_MONEY_FELL = 3
 }
 
+--in the full game should scenariokonbini contain actions like this? I guess it depends on how we scope
+--what this class should really mean. Because we could just have a separate data class for all scenarios' stuff
+--or really short individual ones that override a main template / abstract class
+
 local bg = gfx.image.new("images/background/konbiniBackground2.png")
 local bg_sprite = gfx.sprite.new(bg)
 
 local timer = 0
 
 
+--stuff like this obviously should be abstracted
 function ScenarioKombini:init(scenario_type)
     bg_sprite:moveTo(200, 400)
     bg_sprite:add()
@@ -60,11 +65,12 @@ function ScenarioKombini:init(scenario_type)
     end
 
 
-    self.partner_bow_index = 1
+    self.partner_bow_index = 1 --what's this?
     self.bows_complete = false
     self.bow_intervals_for_player = {}
 
     if scenario_type == Actions.CHECKOUT then
+        --yeah this looks nasty lol
         self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT()
         ScenarioKombini.super.init(
             self,
@@ -125,6 +131,8 @@ function ScenarioKombini:calculateScore(player_bow_table, player_intervals)
     return ScenarioKombini.super.calculateScore(self, player_bow_table, player_intervals)
 end
 
+--I think ideally this should just give the partner AI parameters, and the partner AI's logic in a separate class
+--carries it out
 function ScenarioKombini:generatePartnerBowTable_CHECKOUT()
     local num_bows = 1
     local totalTime = 0
@@ -295,6 +303,7 @@ function ScenarioKombini:getTotalTimeProvided()
     return ScenarioKombini.super.getTotalTimeProvided(self)
 end
 
+--yeah we need some work on this lol
 function ScenarioKombini:runOutro(dt)
     if not self.playerSprite.startedWalkingIn and self.emotes_done == false then
         self.playerSprite:change_current_image(1)
