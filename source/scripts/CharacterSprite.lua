@@ -7,17 +7,17 @@ local pd = playdate
 local gfx = pd.graphics
 local walking_sfx = playdate.sound.fileplayer.new("sounds/pop-walk.mp3")
 
--- Requires: bottom_sprite (string), sprite_sheet (string)
+-- Requires: sprite_sheet (string) (spritesheet of character's bowing frames)
 function CharacterSprite:init(sprite_sheet)
     self.top_sprite_sheet = gfx.imagetable.new(sprite_sheet)
-    self.current_image = self.top_sprite_sheet:getImage(1)
+    --self.current_image = self.top_sprite_sheet:getImage(1) redundant line
 
     --walking state for the walk-in animation
     -- state for the walk-in animation
     self.walking = false
-    self.walkTarget = 0
-    self.walkSpeed = 4
-    self.slowRadius = 25 --distance from target when we start slowing down
+    self.walkTarget = 0 --target x value where this sprite will fully stop
+    self.walkSpeed = 4 --pixels per frame? Not sure
+    self.slowRadius = 25 --distance in pixels from target when we start slowing down
 
 
     -- current image is preset to the first frame of the sprite sheet
@@ -57,6 +57,7 @@ function CharacterSprite:updateWalkIn()
         return
     end
 
+    --walkSpeed converts to 'step', step will decrease as character gets closer to target
     local step = self.walkSpeed
     if dist < self.slowRadius then
         step = self.walkSpeed * (dist / self.slowRadius)
@@ -66,7 +67,7 @@ function CharacterSprite:updateWalkIn()
 
     --this logic handles the y value 'bounce'
     --we tie the bounce speed to 'step' from above
-    self.bouncePhase += math.abs(step) * self.bounceFrequency
+    self.bouncePhase = self.bouncePhase + math.abs(step) * self.bounceFrequency
     local bounceOffset = math.sin(self.bouncePhase) * self.bounceAmplitude
 
     --clamp offset
@@ -77,6 +78,7 @@ function CharacterSprite:updateWalkIn()
         walking_sfx:play()
     end
 
+    --actual moving
     self.playerSprite:moveTo(newX, self.baseY + bounceOffset)
 end
 
@@ -123,6 +125,7 @@ function CharacterSprite:add()
     self.playerSprite:add()
 end
 
+--I dont think this is being used
 function CharacterSprite:setImageFlip(flip)
     self.playerSprite:setImageFlip(flip)
     return self

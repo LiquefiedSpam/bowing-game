@@ -5,13 +5,13 @@ class('PartnerBow').extends()
 -- param timeStart (number): The time at which the bow should start.
 -- param duration (number): The duration of the bow.
 -- param deepness (number): The depth of the bow
--- param resetPosition (number): The position to which the partner should return after the bow is
+-- param resetPosition (number): The position to which the partner should return after the bow is done
 function PartnerBow:init(timeStart, duration, deepness, resetPosition)
     self.timeStart = timeStart
     self.duration = duration
     self.deepness = deepness
     self.resetPosition = resetPosition
-    self.timeBetweenBowIntervals = 5 / 30
+    self.timeBetweenBowIntervals = 5 / 30 --what's this?
 end
 
 function PartnerBow:getTimeStart()

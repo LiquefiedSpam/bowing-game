@@ -3,25 +3,26 @@ class("HeartScreen").extends()
 
 local gfx = playdate.graphics
 
--- player has 5 lives. If they get a medium or low score, they lose a life.
+-- player has 3 lives. If they get a medium or low score, they lose a life.
 function HeartScreen:init()
     self.maxHearts = 3
     self.currentHearts = self.maxHearts
-    self.heartSpacing = 5
-    self.heartWidth = 35
+    self.heartSpacing = 5 -- pixels between each heart?
+    self.heartWidth = 35 --width of heart icon
     self.heartImages = {
         full = gfx.image.new("images/UI_screens/heart-full.png"),
         empty = gfx.image.new("images/UI_screens/heart-blank.png")
     }
 end
 
--- function to lose a life and update the heart UI accordingly. Returns a boolean indicating whether the player has any lives left (true if they do, false if they don't).
+-- function to lose a life and update the heart UI accordingly. 
+-- Returns a boolean indicating whether the player has any lives left (true if they do, false if they don't).
 function HeartScreen:loseLife()
     if self.currentHearts > 0 then
         self.currentHearts = self.currentHearts - 1
     end
 
-    print("Num of hearts left: " .. self.currentHearts)
+    --print("Num of hearts left: " .. self.currentHearts)
     return self.currentHearts > 0
 end
 

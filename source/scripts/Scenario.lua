@@ -113,7 +113,7 @@ function Scenario:calculateScore(player_bow_table, player_intervals)
             longest_bow_frame = bow:getBowTimer()
         end
 
-        total_bow_size += (bow:getCurrentLowestBowFrame() - bow:getCurrentBowFrame())
+        total_bow_size = total_bow_size + (bow:getCurrentLowestBowFrame() - bow:getCurrentBowFrame())
     end
 
     local ave_bow_size = total_bow_size / num_of_bows
@@ -145,7 +145,7 @@ function Scenario:checkPlayerMovement(current_player_position, current_partner_p
         self.current_partner_bow_position = current_partner_position
         self.bow_afk_timer = 0
     else
-        self.bow_afk_timer += delta_time
+        self.bow_afk_timer = self.bow_afk_timer + delta_time
     end
 
     return true

@@ -7,7 +7,7 @@ class('BowingConditions').extends()
 function BowingConditions:init(table_of_conditions, time_fogiveness)
     self.conditions = table_of_conditions
     self.time_fogiveness = time_fogiveness
-end
+end 
 
 -- Compares the player's bow table with the conditions for the scenario. Returns the number of points accordingly.
 -- param: player_bow_table is a table of the Bow class of the player's performance in a scenario
