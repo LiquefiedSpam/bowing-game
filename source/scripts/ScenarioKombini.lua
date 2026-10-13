@@ -53,15 +53,17 @@ function ScenarioKombini:init(scenario_type)
     self.emotes_done = false
 
     if scenario_type ~= Actions.CHECKOUT_MONEY_FELL then
-        self.cutscene = Cutscene(
-            "images/background/miniKonbini.png",
-            "images/background/moneyTransfer-table-114-114.png",
-            "images/background/miniLady.png")
+        self.cutscene = Cutscene({
+            { path = "images/background/miniKonbini.png",                 is_animated = false },
+            { path = "images/background/moneyTransfer-table-114-114.png", is_animated = true, blank_frames_at_end = 1 },
+            { path = "images/background/miniLady.png",                    is_animated = false },
+        })
     else
-        self.cutscene = Cutscene(
-            "images/background/miniKonbini.png",
-            "images/background/moneyTransferFall-table-114-114.png",
-            "images/background/shockedLady.png")
+        self.cutscene = Cutscene({
+            { path = "images/background/miniKonbini.png",                     is_animated = false },
+            { path = "images/background/moneyTransferFall-table-114-114.png", is_animated = true, blank_frames_at_end = 1 },
+            { path = "images/background/shockedLady.png",                     is_animated = false },
+        })
     end
 
 
