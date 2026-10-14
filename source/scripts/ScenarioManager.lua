@@ -24,6 +24,7 @@ local ScenarioState = {
     BUILDSCENE = 7
 }
 
+-- NOT NEEDED
 local Npc = {
     KONBINI_CLERK = 1
 }
@@ -34,19 +35,24 @@ local gfx = pd.graphics
 -- Main Menu
 local mainMenu = gfx.image.new("images/UI_screens/BowMainMenu.png")
 
+-- WHY TWO TIMERS?
 local timer = 0
 local totalTimer = 0
 
 local dt = 0
 
+-- NOT NEEDED
 local score = 0
 
 function ScenarioManager:init()
     self.hasScenario = true
     self.currentState = ScenarioState.INTERVAL
+
+    -- IS THIS GOOD PRACTICE? I CANNOT TELL
     self.currentScenario = nil
     self.playerObj = nil
     self.partnerObj = nil
+
     self.totalTimeGivenSec = 60
     self.backgroundPlayer = BackgroundMusic()
 
@@ -62,9 +68,12 @@ function ScenarioManager:update()
     if self.currentState == nil then
         self.currentState = ScenarioState.INTERVAL
     end
+
+    -- SHOULD THIS BE HERE?
     dt = playdate.getElapsedTime()
     playdate.resetElapsedTime()
 
+    -- I LIKE THIS A LOT
     if self.currentState == ScenarioState.INTERVAL then
         mainMenu:draw(0, 0)
         if pd.buttonJustPressed(pd.kButtonA) then
@@ -80,6 +89,8 @@ function ScenarioManager:update()
             error("No scenario has been created. Cannot run cutscene sequence.")
         end
         playdate.graphics.clear()
+
+        -- WHAT DOES FIN STAND FOR AGAIN?
         local fin = self.currentScenario:runCutscene(dt)
         self.heartScreen:drawHearts()
         self.scoreScreen:drawScore()
@@ -91,6 +102,7 @@ function ScenarioManager:update()
 
     if self.currentState == ScenarioState.INTRO then
         self:RunIntro()
+        -- COULD BE IN ANOTHER METHOD (THESE TWO LINES)
         self.heartScreen:drawHearts()
         self.scoreScreen:drawScore()
     end
@@ -126,6 +138,8 @@ function ScenarioManager:ConstructScenario()
     -- self.currentScenario = ScenarioKombini(1)
 
     local location_count = 0
+
+    -- MAYBE LOCATIONSCENARIOS SHOULD BE CONSTANTS?
     for _ in pairs(LocationScenarios) do
         location_count = location_count + 1
     end

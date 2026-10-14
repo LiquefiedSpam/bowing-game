@@ -1,3 +1,5 @@
+-- PRETTY SURE THIS IS USELESS
+
 -- class to handle bowing conditions and logic in a given scene
 class('BowingConditions').extends()
 

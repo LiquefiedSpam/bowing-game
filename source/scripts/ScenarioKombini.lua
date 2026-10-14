@@ -26,6 +26,7 @@ local timer = 0
 function ScenarioKombini:init(scenario_type)
     bg_sprite:moveTo(200, 400)
     bg_sprite:add()
+    -- PROB BETTER TO INTERGRATE PLAYER SPRITE INTO SCENEARIO
     self.playerSprite = CharacterSprite(
         "images/player/playerSpriteSheet2-table-400-240",
         0)
@@ -64,6 +65,7 @@ function ScenarioKombini:init(scenario_type)
     self.bows_complete = false
     self.bow_intervals_for_player = {}
 
+    -- PREFERABLY THESE ARE INDEPENDENT METHODS? IDK, IM NOT SURE HOW I LIKE THIS
     if scenario_type == Actions.CHECKOUT then
         self.partner_bow_table = self:generatePartnerBowTable_CHECKOUT()
         ScenarioKombini.super.init(
@@ -205,6 +207,8 @@ end
 
 -- Runs the intro sequence for the Kombini scenario, which includes the player and partner walking into the scene.
 -- returns a boolean indicating whether the intro sequence has completed (true) or is still in progress (false).
+
+-- IS THIS TRUE FOR ALL SCENARIOS THOUGH? WHY NOT SUPER IT
 function ScenarioKombini:runIntro(dt)
     self:slide_bg(true, dt)
 
@@ -231,6 +235,7 @@ function ScenarioKombini:runIntro(dt)
     return false
 end
 
+-- SAME WITH ABOVE METHODS
 function ScenarioKombini:slide_bg(slide_in, dt)
     if self.bg_moved_in then
         return
@@ -258,6 +263,8 @@ end
 
 -- Updates the player's bowing state based on the current crank position.
 -- Returns playerObj for debugging purpose in scenarioManager.lua
+
+-- PARENT?
 function ScenarioKombini:updatePlayerBowing(currentTime)
     self.playerObj:setBowFrameIndex(currentTime)
     return self.playerObj
@@ -272,6 +279,8 @@ end
 -- Updates the partner's bowing state based on time
 -- param: currentTime (number): The current time in seconds since the start of the scenario, used to determine the partner's bowing state.
 -- Returns partnerObj for debugging purpose in scenarioManager.lua
+
+-- SUPER?
 function ScenarioKombini:updatePartnerBowing(currentTime)
     if not (currentTime >= 0) then
         error("currentTime parameter is invalid. Cannot update partner bowing state.")
@@ -295,6 +304,7 @@ function ScenarioKombini:getTotalTimeProvided()
     return ScenarioKombini.super.getTotalTimeProvided(self)
 end
 
+-- PARENT?
 function ScenarioKombini:runOutro(dt)
     if not self.playerSprite.startedWalkingIn and self.emotes_done == false then
         self.playerSprite:change_current_image(1)

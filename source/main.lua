@@ -1,10 +1,10 @@
+--WE DO NOT NEED ALL THESE IMPORTS
 import "CoreLibs/sprites"
 import "CoreLibs/graphics"
 import "scripts/CharacterSprite"
 import "scripts/Player"
 import "scripts/Partner"
 import "scripts/ScenarioManager"
-import "scripts/HeartScreen"
 import "scripts/BackgroundMusic"
 
 local pd = playdate
