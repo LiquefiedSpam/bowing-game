@@ -35,27 +35,13 @@ function Player:setUp()
     self.character_sprite:add()
 end
 
---notes the crank position at the start of a scenario. It's a little clunky that it's its own method
---here because it's not really a universally applicable thing, it is called once per scenario at one time
---also probably not ideal to introduce new self variables in a method like this
-function Player:setInitialCrankPos(crankPos)
-    if crankPos == 0 then
-        self.initial_crank_pos = 1 --this may be a little lazy way of doing this
-    else
-        self.initial_crank_pos = crankPos
-    end
-    --if we treat initial_crank_pos to equal 0, max_crank_num is the max of the degrees we can bow with,
-    --so it'll be (bow_range). The thing is, the player can start a scenario at any (initial_crank_pos),
-    --so max_crank_num needs to adapt to that-- it'll be (initial_crank_pos) + (bow_range). However, when we
-    --look at this number as degrees it gets complicated quick when this value is over 360, so we adjust for that
-    --and then introduce the crank_can_overflow variable to account for if we cross the 360 -> 0 threshold.
-    self.max_crank_num = crankPos + self.bow_range
-    if self.max_crank_num > 360 then
-        self.max_crank_num = self.max_crank_num - 360
-        self.crank_can_overflow = true
-    else
-        self.crank_can_overflow = false
-    end
+-- Makes wherever the crank is right now count as the start of the frame the player is currently in.
+-- The crank is tracked by how far it has moved since the last check, so this throws away any movement
+-- that hasn't been used yet and forgets how far into the current frame the player had got.
+-- Call it whenever the crank wasn't being read for a while: before a scenario starts, and when the game resumes.
+function Player:resetCrank()
+    pd.getCrankChange()
+    self.progress_in_current_frame = 0
 end
 
 -- Sets the current frame of the player sprite based on the position of the crank.

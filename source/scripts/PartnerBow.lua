@@ -11,7 +11,6 @@ function PartnerBow:init(timeStart, duration, deepness, resetPosition)
     self.duration = duration
     self.deepness = deepness
     self.resetPosition = resetPosition
-    self.timeBetweenBowIntervals = 5 / 30 --what's this?
 end
 
 function PartnerBow:getTimeStart()

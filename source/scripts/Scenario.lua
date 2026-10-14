@@ -31,18 +31,18 @@ function Scenario:init(
     self.size_bow_humility = size_bow_humility
 
     self.player_bowing_intervals =
-    player_bowing_intervals                                --we should probably rename this to like 'ideal player bowing intervals'
+        player_bowing_intervals           --we should probably rename this to like 'ideal player bowing intervals'
     self.player_bowing_intervals_forgiveness = player_bowing_intervals_forgiveness
-    self.calculatedScore = false                           --have not calculated score yet
-    self.total_time_provided = 6                           --length of cutscene
+    self.calculatedScore = false          --have not calculated score yet
+    self.total_time_provided = 6          --length of cutscene
 
-    self.current_player_bow_position = 1                   --what's this?
-    self.current_partner_bow_position = 1                  --what's this?
-    self.bow_afk_timer = 0                                 --what's this?
-    self.bow_afk_timer_max = 2                             --what's this?
+    self.current_player_bow_position = 1  --what's this?
+    self.current_partner_bow_position = 1 --what's this?
+    self.last_movement_time = 0           --gameplay time at which anyone last moved
+    self.bow_afk_timer_max = 2            --seconds without any movement before the scene ends
 
-    self.emote_player = nil                                --player emote to show at end of scenario
-    self.emote_partner = nil                               --partner emote to show at end of scenario
+    self.emote_player = nil               --player emote to show at end of scenario
+    self.emote_partner = nil              --partner emote to show at end of scenario
 end
 
 -- returns a string result representing the score of the scenario based on the player's performance and the conditions of the scenario
@@ -140,8 +140,9 @@ end
 -- this should definitely be overhauled to be more nuanced later, because the player could  be waiting for the partner
 --to do something, etc
 --also rename the passed in variables bc current_player_position sounds like their x/y position
-function Scenario:checkPlayerMovement(current_player_position, current_partner_position, delta_time)
-    if self.bow_afk_timer >= self.bow_afk_timer_max then
+--current_time is the gameplay time in seconds; time without movement is worked out from it, not counted up
+function Scenario:checkPlayerMovement(current_player_position, current_partner_position, current_time)
+    if current_time - self.last_movement_time >= self.bow_afk_timer_max then
         print("No movement has been detected for " .. self.bow_afk_timer_max .. " seconds. Ending scene.")
         return false
     end
@@ -149,9 +150,7 @@ function Scenario:checkPlayerMovement(current_player_position, current_partner_p
     if current_player_position ~= self.current_player_bow_position or current_partner_position ~= self.current_partner_bow_position then
         self.current_player_bow_position = current_player_position
         self.current_partner_bow_position = current_partner_position
-        self.bow_afk_timer = 0
-    else
-        self.bow_afk_timer = self.bow_afk_timer + delta_time
+        self.last_movement_time = current_time
     end
 
     return true

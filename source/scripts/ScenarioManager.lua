@@ -1,4 +1,5 @@
 import "scripts/Clock"
+import "scripts/ResumeCountdown"
 import "scripts/ScenarioKombini"
 import "scripts/HeartScreen"
 import "scripts/ScoreScreen"
@@ -45,8 +46,9 @@ function ScenarioManager:init()
     self.playerObj = nil
     self.partnerObj = nil
     self.totalTimeGivenSec = 60
-    self.dt = 0                   --seconds since the last update, set once per frame in update()
-    self.gameplay_clock = Clock() --time elapsed in the gameplay portion of the current scenario
+    self.dt = 0                              --seconds since the last update, set once per frame in update()
+    self.gameplay_clock = Clock()            --time elapsed in the gameplay portion of the current scenario
+    self.resumeCountdown = ResumeCountdown() --shown after the player closes the system menu mid-scenario
     self.backgroundPlayer = BackgroundMusic()
 
     -- Heart Screen
@@ -62,6 +64,19 @@ function ScenarioManager:update()
     end
     self.dt = playdate.getElapsedTime()
     playdate.resetElapsedTime()
+
+    --while the resume countdown shows, the game stays frozen: nothing below runs, so no clock advances
+    if self.resumeCountdown:is_active() then
+        if not self.resumeCountdown:update(self.dt) then
+            self.backgroundPlayer:update()
+            return
+        end
+
+        --the countdown just finished: wherever the crank is now is the start of the player's current bow frame
+        if self.currentScenario ~= nil and self.currentScenario.playerObj ~= nil then
+            self.currentScenario.playerObj:resetCrank()
+        end
+    end
 
     if self.currentState == ScenarioState.INTERVAL then
         mainMenu:draw(0, 0)
@@ -116,6 +131,26 @@ function ScenarioManager:update()
     end
 
     self.backgroundPlayer:update()
+end
+
+-- True while a scenario is in progress (anything other than the main menu).
+function ScenarioManager:isScenarioRunning()
+    return self.currentState ~= nil and self.currentState ~= ScenarioState.INTERVAL
+end
+
+-- Called when the system pauses the game. Keeps a picture of the screen to show behind the countdown.
+function ScenarioManager:onPause()
+    if self:isScenarioRunning() then
+        self.resumeCountdown:capture()
+    end
+end
+
+-- Called when the system resumes the game. Starts the resume countdown, but not on the main menu.
+function ScenarioManager:onResume()
+    if self:isScenarioRunning() then
+        playdate.resetElapsedTime() --the time spent in the system menu must not count towards the countdown
+        self.resumeCountdown:start()
+    end
 end
 
 -- Creates a new scenario based on the current location and action. Initializes the scenario and sets it as the current scenario.
@@ -177,7 +212,7 @@ function ScenarioManager:RunGameplay()
     local player_moved = self.currentScenario:checkPlayerMovement(
         self.playerObj:getCurrentBowFrame(),
         self.partnerObj:getCurrentBowFrame(),
-        self.dt)
+        gameplay_time)
     if not player_moved then --wait how does this work?
         self.currentState = ScenarioState.SCORING
     end
