@@ -1,3 +1,4 @@
+import "scripts/Clock"
 import "scripts/CutsceneBox"
 
 -- Cutscene class, represents a cutscene in the game, which displays a sequence of boxes with sound effects.
@@ -15,7 +16,7 @@ local max_gap = 24               --widest gap allowed between boxes, so a few bo
 -- Each box_specs spec is: {path = ..., is_animated = ..., blank_frames_at_end = ... (optional)}
 function Cutscene:init(box_specs)
     --the single clock the whole sequence is calculated from. Pausing = not advancing it.
-    self.clock = 0
+    self.clock = Clock()
 
     --first part is defined as all the boxes showing up before they move off screen. It ends one
     --interval after the last box appears.
@@ -58,11 +59,11 @@ end
 
 -- Advances the cutscene by dt seconds and draws it. Returns true once every box has slid off screen.
 function Cutscene:draw(dt)
-    self.clock = self.clock + dt
+    self.clock:advance(dt)
 
     local all_finished = true
     for _, box in ipairs(self.boxes) do
-        box:update(self.clock)
+        box:update(self.clock:now())
         box:draw()
         if not box:is_finished() then
             all_finished = false

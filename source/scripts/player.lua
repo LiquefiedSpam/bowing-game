@@ -16,6 +16,7 @@ function Player:init(character_sprite, x_position, y_position, speed)
     self.current_bow_num = 0 --maybe 'total_bow_num'
     self.current_lowest_bow_frame = 0
     self.current_bow_timer = 0
+    self.last_update_time = nil --scenario time of the previous setBowFrameIndex call
     self.starting_bow_frame = 0
 
     self.progress_in_current_frame = 0
@@ -61,6 +62,11 @@ end
 -- param crankPosition (number): The position of the crank, which will be translated into a bow frame index (0-360)
 -- param currentTime (number): The current time in seconds since the start of the scenario
 function Player:setBowFrameIndex(currentTime)
+    --seconds since the last call, taken from the scenario clock so it stays accurate at any frame rate
+    --and freezes with the clock when paused
+    local dt = currentTime - (self.last_update_time or currentTime)
+    self.last_update_time = currentTime
+
     local change = pd.getCrankChange() --change in degrees since last check
     --progress_in_current_frame means the amount of degrees above this frame's 'starting point' we are
     --this is a little clunky because ideally we should never have a blip of time where progress_in_current_frame
