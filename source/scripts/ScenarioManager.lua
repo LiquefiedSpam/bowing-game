@@ -1,3 +1,4 @@
+import "scripts/Clock"
 import "scripts/ScenarioKombini"
 import "scripts/HeartScreen"
 import "scripts/ScoreScreen"
@@ -35,11 +36,6 @@ local gfx = pd.graphics
 -- ofc later this should be relocated to its own class
 local mainMenu = gfx.image.new("images/UI_screens/BowMainMenu.png")
 
-local timer = 0 --timer for an individual scenario
-local totalTimer = 0
-
-local dt = 0    --delta time
-
 local score = 0 --unused?
 
 function ScenarioManager:init()
@@ -49,6 +45,8 @@ function ScenarioManager:init()
     self.playerObj = nil
     self.partnerObj = nil
     self.totalTimeGivenSec = 60
+    self.dt = 0                   --seconds since the last update, set once per frame in update()
+    self.gameplay_clock = Clock() --time elapsed in the gameplay portion of the current scenario
     self.backgroundPlayer = BackgroundMusic()
 
     -- Heart Screen
@@ -62,7 +60,7 @@ function ScenarioManager:update()
     if self.currentState == nil then
         self.currentState = ScenarioState.INTERVAL
     end
-    dt = playdate.getElapsedTime()
+    self.dt = playdate.getElapsedTime()
     playdate.resetElapsedTime()
 
     if self.currentState == ScenarioState.INTERVAL then
@@ -80,7 +78,7 @@ function ScenarioManager:update()
             error("No scenario has been created. Cannot run cutscene sequence.")
         end
         playdate.graphics.clear()
-        local fin = self.currentScenario:runCutscene(dt) --run this every frame until true basically
+        local fin = self.currentScenario:runCutscene(self.dt) --run this every frame until true basically
         self.heartScreen:drawHearts()
         self.scoreScreen:drawScore()
 
@@ -108,7 +106,6 @@ function ScenarioManager:update()
     end
 
     if self.currentState == ScenarioState.OUTRO then
-        timer = 0
         self:RunOutro()
         self.heartScreen:drawHearts()
         self.scoreScreen:drawScore()
@@ -123,6 +120,7 @@ end
 
 -- Creates a new scenario based on the current location and action. Initializes the scenario and sets it as the current scenario.
 function ScenarioManager:ConstructScenario()
+    self.gameplay_clock:reset()
     -- self.currentScenario = ScenarioKombini(1)
 
     local location_count = 0
@@ -156,7 +154,7 @@ function ScenarioManager:RunIntro()
         error("No scenario has been created. Cannot run intro sequence.")
     end
 
-    local intro_result = self.currentScenario:runIntro(dt)
+    local intro_result = self.currentScenario:runIntro(self.dt)
     if intro_result then
         self.currentState = ScenarioState.GAMEPLAY
     end
@@ -167,19 +165,19 @@ function ScenarioManager:RunGameplay()
         error("No scenario has been created. Cannot run gameplay sequence.")
     end
 
-    timer = timer + dt
-    totalTimer = totalTimer + dt
+    self.gameplay_clock:advance(self.dt)
+    local gameplay_time = self.gameplay_clock:now()
     --dummy ending for a s1cenario
-    if timer > self.currentScenario:getTotalTimeProvided() then
+    if gameplay_time > self.currentScenario:getTotalTimeProvided() then
         self.currentState = ScenarioState.SCORING
     end
 
-    self.playerObj = self.currentScenario:updatePlayerBowing(timer)
-    self.partnerObj = self.currentScenario:updatePartnerBowing(timer)
+    self.playerObj = self.currentScenario:updatePlayerBowing(gameplay_time)
+    self.partnerObj = self.currentScenario:updatePartnerBowing(gameplay_time)
     local player_moved = self.currentScenario:checkPlayerMovement(
         self.playerObj:getCurrentBowFrame(),
         self.partnerObj:getCurrentBowFrame(),
-        dt)
+        self.dt)
     if not player_moved then --wait how does this work?
         self.currentState = ScenarioState.SCORING
     end
@@ -255,7 +253,7 @@ function ScenarioManager:RunOutro()
         error("No scenario has been created. Cannot run outro sequence.")
     end
 
-    local outro_result = self.currentScenario:runOutro(dt)
+    local outro_result = self.currentScenario:runOutro(self.dt)
     if outro_result then
         self.currentState = ScenarioState.BUILDSCENE
         self.currentAction = nil

@@ -101,11 +101,10 @@ function Player:setBowFrameIndex(currentTime)
         self.current_bow_start_time = currentTime
         self.in_bow = true
 
-        -- if current bow frame is equal to the lowest, increment the timer by 1/30th of a second (assuming 30 FPS)
+        -- if current bow frame is equal to the lowest, add the time since the last update to the timer
     elseif bowFrameIndex == self.current_lowest_bow_frame then
         if bowFrameIndex ~= self.starting_bow_frame then
-            self.current_bow_timer = self.current_bow_timer +
-                (1 / 30) -- Assuming the update function is called at 30 FPS
+            self.current_bow_timer = self.current_bow_timer + dt
         end
 
         -- if the current bow frame is 2 frames less than the lowest, then the player has completed a bow. If the player then bows forward, a new bow is created.
