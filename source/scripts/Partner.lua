@@ -3,61 +3,59 @@ import "scripts/Bowing"
 -- Partner class, inherits from the Bowing class and represents the partner character in the game.
 class('Partner').extends(Bowing)
 
+-- SHARED CONSTANTS for every bow
+local bow_move_time = 0.2 --seconds the partner takes to go from upright to the deepest frame (and back)
+
 -- Requires: character_sprite (CharacterSprite), x_position (number), y_position (number), speed (number)
+--what does speed do?
 function Partner:init(character_sprite, x_position, y_position, speed)
     Partner.super.init(self, character_sprite, x_position, y_position, speed)
     self.setUp(self)
     self.in_lowest_bow_frame = false
-    self.current_frame = 0
+    self.current_frame = 0 -- 0 is upright
 end
 
 -- Set up the partner sprite and any other necessary properties
+-- 'setting up' here means putting the partner into its spot for a scenario
 function Partner:setUp()
     self.character_sprite:moveTo(self.x, self.y)
     self.character_sprite:add()
 end
 
--- adjusts the bow position of the partner sprite based on the provided PartnerBow object
+-- Work out which sprite frame the partner is on at the given time (seconds) and show it.
+-- Everything is calculated from the time, so nothing accumulates and nothing depends on frame rate.
+-- A bow runs on this schedule, relative to partnerBow's start time:
+--   0 -> bow_move_time              go from the reset frame down to the deepest frame
+--   bow_move_time -> duration       hold the deepest frame
+--   duration -> duration + move     come back up to the reset frame
 -- returns whether the bow is complete
 function Partner:adjustBowPosition(partnerBow, current_time)
-    self.current_frame = self.character_sprite.current_image_index
-    local bow_start_time = partnerBow:getTimeStart()
-    local deepness = partnerBow:getDeepness()
-    local reset_position = partnerBow:getResetPosition()
-    local bow_deep_time = partnerBow:getDuration()
-    -- print("Current Frame: " ..
-    --     current_frame ..
-    --     ", Deepness: " ..
-    --     deepness ..
-    --     ", Reset Position: " ..
-    --     reset_position .. ", Current Time: " .. current_time .. ", Bow Deep Time: " .. bow_deep_time)
+    --lots of coupling, but it can be fine
+    local bow_start_time = partnerBow:getTimeStart()         --the time (from now?) at which the bow should start
+    local deepness = partnerBow:getDeepness()                --the deepness which this bow should reach
+    local reset_position = partnerBow:getResetPosition()     --the position to which this partner should reset? shouldn't that be frame 0?
+    local bow_deep_time = partnerBow:getDuration()           --seconds from the bow's start until it begins coming back up
 
-    local function stepTowards(target_frame)
-        if self.current_frame < target_frame then
-            self:setCurrentFrame(self.current_frame + 1)
-        elseif self.current_frame > target_frame then
-            self:setCurrentFrame(self.current_frame - 1)
-        end
-    end
+    local move_time = math.min(bow_move_time, bow_deep_time) --a very short bow can't move for longer than it lasts
+    local bow_end_time = bow_start_time + bow_deep_time + move_time
+    local elapsed = current_time - bow_start_time
 
-    if current_time < bow_start_time then
-        self.in_lowest_bow_frame = false
-        stepTowards(reset_position)
-    elseif current_time < bow_start_time + bow_deep_time then
-        self.in_lowest_bow_frame = false
-        stepTowards(deepness)
+    --how far down the bow is: 0 = reset frame, 1 = deepest frame
+    local depth
+    if elapsed < move_time then
+        depth = math.max(0, elapsed) / move_time
+    elseif elapsed < bow_deep_time then
+        depth = 1
     else
-        self.in_lowest_bow_frame = true
-
-        if self.current_frame == reset_position then
-            self.in_lowest_bow_frame = false
-            return true
-        end
-
-        stepTowards(reset_position)
+        depth = 1 - math.min(1, (elapsed - bow_deep_time) / move_time)
     end
 
-    return false
+    self:setCurrentFrame(math.floor(reset_position + (deepness - reset_position) * depth + 0.5))
+
+    --this should probably be handled elsewhere by a parent class
+    self.in_lowest_bow_frame = current_time >= bow_start_time + bow_deep_time and current_time < bow_end_time
+
+    return current_time >= bow_end_time
 end
 
 -- Sets the current frame of the partner sprite based on the provided image index

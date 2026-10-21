@@ -1,131 +1,74 @@
--- Cutscene class, represents a cutscene in the game, which displays a sequence of images with sound effects.
+import "scripts/Clock"
+import "scripts/CutsceneBox"
+
+-- Cutscene class, represents a cutscene in the game, which displays a sequence of boxes with sound effects.
+--should note that this is only a cutscene for the introduction of what a scenario will be comprised of.
 class("Cutscene").extends()
 
-local gfx = playdate.graphics
-local pd = playdate
-local boxes_sprite = gfx.image.new("background/box-sprites.png")
-local box_sfx = playdate.sound.fileplayer.new("sounds/box_add_sfx.mp3")
-local timer = 0
-local timer2_1 = 0
-local timer2_2 = 0
-local timer2_3 = 0
+-- SHARED CONSTANTS for the whole sequence
+local interval_between_boxes = 1 --the time in seconds between boxes appearing
+local slide_stagger = .3         --seconds after a box starts sliding before the next one starts
+local max_gap = 24               --widest gap allowed between boxes, so a few boxes stay grouped
 
-local starting_y_value = 64
-local y_value_1 = starting_y_value
-local y_value_2 = starting_y_value
-local y_value_3 = starting_y_value
+-- Cutscene class constructor.
+-- box_specs: a list with one entry per box, in order.
+-- Any number of boxes technically works.
+-- Each box_specs spec is: {path = ..., is_animated = ..., blank_frames_at_end = ... (optional)}
+function Cutscene:init(box_specs)
+    --the single clock the whole sequence is calculated from. Pausing = not advancing it.
+    self.clock = Clock()
 
-local interval_between_boxes = 1
+    --first part is defined as all the boxes showing up before they move off screen. It ends one
+    --interval after the last box appears.
+    local slide_phase_start = (#box_specs + 1) * interval_between_boxes
 
--- Cutscene class constructor, taking in three image file paths corresponding to the images to be displayed in the cutscene.
-function Cutscene:init(image_one_path, image_two_path, image_three_path)
-    self.image_one_path = gfx.image.new(image_one_path)
-    self.image_two_path = gfx.imagetable.new(image_two_path)
-    self.image_three_path = gfx.image.new(image_three_path)
+    self.boxes = {}
+    for i, spec in ipairs(box_specs) do
+        local appear_time = i * interval_between_boxes
+        local slide_start = slide_phase_start + (i - 1) * slide_stagger
+        self.boxes[i] = CutsceneBox(spec.path, spec.is_animated, appear_time, slide_start, spec.blank_frames_at_end)
+    end
 
-    self.first_part_complete = false
-    self.animation_complete = false
-
-    self.cur_anim_frame = 1
-    self.sound1Bool = false
-    self.sound2Bool = false
-    self.sound3Bool = false
-
-    timer2_1 = 0
-    timer2_2 = 0
-    timer2_3 = 0
-
-    y_value_1 = starting_y_value
-    y_value_2 = starting_y_value
-    y_value_3 = starting_y_value
-
-    self.interval_between_anim_frame = interval_between_boxes / #self.image_two_path
-    timer = 0
+    self:layout_boxes()
 end
 
--- Draws the cutscene by displaying the sequence of images and playing sound effects.
+-- Spreads the boxes across the screen. Gaps are equal and fill the screen (outer margins equal to the
+-- gaps) but never wider than max_gap; the resulting group is then centered.
+function Cutscene:layout_boxes()
+    local count = #self.boxes
+    if count == 0 then
+        return
+    end
+
+    local total_width = 0
+    for _, box in ipairs(self.boxes) do
+        total_width = total_width + box:get_width()
+    end
+
+    local screen_width = playdate.display.getWidth()
+    local gap = (screen_width - total_width) / (count + 1)
+    gap = math.max(0, math.min(max_gap, gap))
+
+    local group_width = total_width + gap * (count - 1)
+    local x = (screen_width - group_width) / 2
+    for _, box in ipairs(self.boxes) do
+        box:set_x(math.floor(x))
+        x = x + box:get_width() + gap
+    end
+end
+
+-- Advances the cutscene by dt seconds and draws it. Returns true once every box has slid off screen.
 function Cutscene:draw(dt)
-    self:animation_sequence(dt)
+    self.clock:advance(dt)
 
-    if self.animation_complete then
-        return true
-    end
-
-    return false
-end
-
-function Cutscene:animation_sequence(dt)
-    timer = timer + dt
-
-    if timer >= interval_between_boxes then
-        if not self.sound1Bool then
-            box_sfx:play()
-            self.sound1Bool = true
-        end
-        self.image_one_path:draw(17, y_value_1)
-    end
-
-
-    if timer >= (interval_between_boxes * 2) then
-        if not self.sound2Bool then
-            box_sfx:play()
-            self.sound2Bool = true
-        end
-        self.image_two_path:getImage(self.cur_anim_frame):draw(145, y_value_2)
-    end
-
-
-    if timer >= (interval_between_boxes * 2) + self.interval_between_anim_frame * self.cur_anim_frame
-        and timer < (interval_between_boxes * 3) then
-        if #self.image_two_path > self.cur_anim_frame + 1 then
-            self.cur_anim_frame = self.cur_anim_frame + 1
+    local all_finished = true
+    for _, box in ipairs(self.boxes) do
+        box:update(self.clock:now())
+        box:draw()
+        if not box:is_finished() then
+            all_finished = false
         end
     end
 
-    if timer >= interval_between_boxes * 3 then
-        if not self.sound3Bool then
-            box_sfx:play()
-            self.sound3Bool = true
-        end
-        self.image_three_path:draw(273, y_value_3)
-    end
-
-    if timer >= (interval_between_boxes * 4)
-    then
-        self.first_part_complete = true
-    end
-
-    if self.first_part_complete then
-        self:slide_off_screen(dt)
-    end
-end
-
-function Cutscene:slide_off_screen(dt)
-    local rate = 3
-
-    timer2_1 = timer2_1 + dt
-    local boost1 = 5 * math.exp(-20 * timer2_1)
-    y_value_1 = y_value_1
-        - boost1
-        - math.exp(rate * timer2_1)
-
-    if timer2_1 > .3 then
-        timer2_2 = timer2_2 + dt
-        local boost2 = 5 * math.exp(-20 * timer2_2)
-        y_value_2 = y_value_2
-            - boost2
-            - math.exp(rate * timer2_2)
-    end
-
-    if timer2_1 > .6 then
-        timer2_3 = timer2_3 + dt
-        local boost3 = 5 * math.exp(-20 * timer2_3)
-        y_value_3 = y_value_3
-            - boost3
-            - math.exp(rate * timer2_3)
-    end
-
-    if y_value_3 < -300 then
-        self.animation_complete = true
-    end
+    return all_finished
 end

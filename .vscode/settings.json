@@ -18,6 +18,7 @@
     "getSM",
     "ScenarioKombini",
     "Cutscene",
+    "CutsceneBox",
     "PlayerBow",
     "PartnerBow",
     "HeartScreen",

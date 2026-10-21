@@ -1,3 +1,5 @@
+import "scripts/Clock"
+import "scripts/ResumeCountdown"
 import "scripts/ScenarioKombini"
 import "scripts/HeartScreen"
 import "scripts/ScoreScreen"
@@ -15,13 +17,13 @@ local Actions = {
 }
 
 local ScenarioState = {
-    INTERVAL = 1,
-    CUTSCENE = 2,
-    INTRO = 3,
-    GAMEPLAY = 4,
-    SCORING = 5,
-    OUTRO = 6,
-    BUILDSCENE = 7
+    INTERVAL = 1,  --interval between 'runs'
+    CUTSCENE = 2,  --the cutscene that plays before gameplay where we get the person, action, place
+    INTRO = 3,     --character(s) walking in
+    GAMEPLAY = 4,  --actual gameplay portion
+    SCORING = 5,   --internal scoring time
+    OUTRO = 6,     --icons show, character(s) move out
+    BUILDSCENE = 7 --build the next scenario
 }
 
 -- NOT NEEDED
@@ -33,19 +35,13 @@ local pd = playdate
 local gfx = pd.graphics
 
 -- Main Menu
+-- ofc later this should be relocated to its own class
 local mainMenu = gfx.image.new("images/UI_screens/BowMainMenu.png")
 
--- WHY TWO TIMERS?
-local timer = 0
-local totalTimer = 0
-
-local dt = 0
-
--- NOT NEEDED
-local score = 0
+local score = 0 --unused?
 
 function ScenarioManager:init()
-    self.hasScenario = true
+    self.hasScenario = true --why is this true if current scenario is nil?
     self.currentState = ScenarioState.INTERVAL
 
     -- IS THIS GOOD PRACTICE? I CANNOT TELL
@@ -54,8 +50,10 @@ function ScenarioManager:init()
     self.partnerObj = nil
 
     self.totalTimeGivenSec = 60
+    self.dt = 0                              --seconds since the last update, set once per frame in update()
+    self.gameplay_clock = Clock()            --time elapsed in the gameplay portion of the current scenario
+    self.resumeCountdown = ResumeCountdown() --shown after the player closes the system menu mid-scenario
     self.backgroundPlayer = BackgroundMusic()
-
 
     -- Heart Screen
     self.heartScreen = HeartScreen()
@@ -68,12 +66,22 @@ function ScenarioManager:update()
     if self.currentState == nil then
         self.currentState = ScenarioState.INTERVAL
     end
-
-    -- SHOULD THIS BE HERE?
-    dt = playdate.getElapsedTime()
+    self.dt = playdate.getElapsedTime()
     playdate.resetElapsedTime()
 
-    -- I LIKE THIS A LOT
+    --while the resume countdown shows, the game stays frozen: nothing below runs, so no clock advances
+    if self.resumeCountdown:is_active() then
+        if not self.resumeCountdown:update(self.dt) then
+            self.backgroundPlayer:update()
+            return
+        end
+
+        --the countdown just finished: wherever the crank is now is the start of the player's current bow frame
+        if self.currentScenario ~= nil and self.currentScenario.playerObj ~= nil then
+            self.currentScenario.playerObj:resetCrank()
+        end
+    end
+
     if self.currentState == ScenarioState.INTERVAL then
         mainMenu:draw(0, 0)
         if pd.buttonJustPressed(pd.kButtonA) then
@@ -89,9 +97,7 @@ function ScenarioManager:update()
             error("No scenario has been created. Cannot run cutscene sequence.")
         end
         playdate.graphics.clear()
-
-        -- WHAT DOES FIN STAND FOR AGAIN?
-        local fin = self.currentScenario:runCutscene(dt)
+        local fin = self.currentScenario:runCutscene(self.dt) --run this every frame until true basically
         self.heartScreen:drawHearts()
         self.scoreScreen:drawScore()
 
@@ -102,8 +108,7 @@ function ScenarioManager:update()
 
     if self.currentState == ScenarioState.INTRO then
         self:RunIntro()
-        -- COULD BE IN ANOTHER METHOD (THESE TWO LINES)
-        self.heartScreen:drawHearts()
+        self.heartScreen:drawHearts() --the draw hearts and score get repetitive; abstract it
         self.scoreScreen:drawScore()
     end
 
@@ -120,7 +125,6 @@ function ScenarioManager:update()
     end
 
     if self.currentState == ScenarioState.OUTRO then
-        timer = 0
         self:RunOutro()
         self.heartScreen:drawHearts()
         self.scoreScreen:drawScore()
@@ -133,8 +137,29 @@ function ScenarioManager:update()
     self.backgroundPlayer:update()
 end
 
+-- True while a scenario is in progress (anything other than the main menu).
+function ScenarioManager:isScenarioRunning()
+    return self.currentState ~= nil and self.currentState ~= ScenarioState.INTERVAL
+end
+
+-- Called when the system pauses the game. Keeps a picture of the screen to show behind the countdown.
+function ScenarioManager:onPause()
+    if self:isScenarioRunning() then
+        self.resumeCountdown:capture()
+    end
+end
+
+-- Called when the system resumes the game. Starts the resume countdown, but not on the main menu.
+function ScenarioManager:onResume()
+    if self:isScenarioRunning() then
+        playdate.resetElapsedTime() --the time spent in the system menu must not count towards the countdown
+        self.resumeCountdown:start()
+    end
+end
+
 -- Creates a new scenario based on the current location and action. Initializes the scenario and sets it as the current scenario.
 function ScenarioManager:ConstructScenario()
+    self.gameplay_clock:reset()
     -- self.currentScenario = ScenarioKombini(1)
 
     local location_count = 0
@@ -149,7 +174,7 @@ function ScenarioManager:ConstructScenario()
         table.insert(location_keys, key)
     end
 
-    local randomLocationIndex = math.random(location_count)
+    local randomLocationIndex = math.random(location_count) --ofc right now it's just the one
     self.currentLocation = location_keys[randomLocationIndex]
     local totalPossibleActions = Actions[self.currentLocation]
     local randomActionIndex = math.random(totalPossibleActions)
@@ -170,7 +195,7 @@ function ScenarioManager:RunIntro()
         error("No scenario has been created. Cannot run intro sequence.")
     end
 
-    local intro_result = self.currentScenario:runIntro(dt)
+    local intro_result = self.currentScenario:runIntro(self.dt)
     if intro_result then
         self.currentState = ScenarioState.GAMEPLAY
     end
@@ -181,20 +206,20 @@ function ScenarioManager:RunGameplay()
         error("No scenario has been created. Cannot run gameplay sequence.")
     end
 
-    timer += dt
-    totalTimer += dt
-    --dummy ending for a scenario
-    if timer > self.currentScenario:getTotalTimeProvided() then
+    self.gameplay_clock:advance(self.dt)
+    local gameplay_time = self.gameplay_clock:now()
+    --dummy ending for a s1cenario
+    if gameplay_time > self.currentScenario:getTotalTimeProvided() then
         self.currentState = ScenarioState.SCORING
     end
 
-    self.playerObj = self.currentScenario:updatePlayerBowing(timer)
-    self.partnerObj = self.currentScenario:updatePartnerBowing(timer)
+    self.playerObj = self.currentScenario:updatePlayerBowing(gameplay_time)
+    self.partnerObj = self.currentScenario:updatePartnerBowing(gameplay_time)
     local player_moved = self.currentScenario:checkPlayerMovement(
         self.playerObj:getCurrentBowFrame(),
         self.partnerObj:getCurrentBowFrame(),
-        dt)
-    if not player_moved then
+        gameplay_time)
+    if not player_moved then --wait how does this work?
         self.currentState = ScenarioState.SCORING
     end
 
@@ -206,6 +231,7 @@ end
 
 function ScenarioManager:RunScoring()
     if self.currentScenario == nil then
+        --this can be abstracted
         error("No scenario has been created. Cannot run scoring sequence.")
     end
 
@@ -234,6 +260,7 @@ function ScenarioManager:RunScoring()
         end
     end
 
+    --definitely can use abstracting work
     local scoring_result = self.currentScenario:calculateScore(self.playerObj.bow_table, self.playerObj.bow_intervals)
     print("Scoring Result: " .. tostring(scoring_result))
     local score_status = self.currentScenario:score()
@@ -267,7 +294,7 @@ function ScenarioManager:RunOutro()
         error("No scenario has been created. Cannot run outro sequence.")
     end
 
-    local outro_result = self.currentScenario:runOutro(dt)
+    local outro_result = self.currentScenario:runOutro(self.dt)
     if outro_result then
         self.currentState = ScenarioState.BUILDSCENE
         self.currentAction = nil
