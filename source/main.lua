@@ -1,10 +1,4 @@
---WE DO NOT NEED ALL THESE IMPORTS
-import "CoreLibs/sprites"
-import "CoreLibs/graphics"
-import "scripts/CharacterSprite"
-import "scripts/Player"
-import "scripts/Partner"
-import "scripts/ScenarioManager"
+import "scripts/GameStateManager"
 import "scripts/BackgroundMusic"
 
 --the main script that runs the game
@@ -12,20 +6,20 @@ import "scripts/BackgroundMusic"
 local pd = playdate
 local gfx = pd.graphics
 
-local scenarioManager = ScenarioManager()
-scenarioManager:init()
+local gameManager = GameStateManager()
+gameManager:init()
 
 --Called by the system when the player opens or closes the system menu
 function pd.gameWillPause()
-    scenarioManager:onPause()
+    gameManager:onPause()
 end
 
 function pd.gameWillResume()
-    scenarioManager:onResume()
+    gameManager:onResume()
 end
 
 --The update function that calls every frame
 function pd.update()
     gfx.sprite.update()
-    scenarioManager:update()
+    gameManager:update()
 end
